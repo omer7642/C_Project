@@ -1,4 +1,4 @@
-#include "passes.h"
+#include "passes.h" 
 
 short IC;
 short DC;
@@ -8,11 +8,11 @@ unsigned char error_flag;
 int first_pass(FILE *fp, char *file_name)
 {
     int word_req;   // current word requirement for the instruction
-    unsigned char line_flag;
-    unsigned char command;
-    enum line_type current_type;
-    char *current_line = (char *)malloc(MAX_LINE);
-    char *symbol_name = (char *)malloc(SYMBOL_MAX_LENGTH);
+    char line_flag; //tells if the line has a symbol decleration
+    unsigned char command; //index of the command
+    enum line_type current_type; // type of the line (instruction,data,string,entry,external)
+    char *current_line = (char *)malloc(MAX_LINE); //holds the current command line
+    char *symbol_name = (char *)malloc(SYMBOL_MAX_LENGTH); //holds the current symbol name (if there is one)
     
     
     IC=0;
@@ -22,10 +22,11 @@ int first_pass(FILE *fp, char *file_name)
 
     while( (line_flag = getline(fp,current_line))!= EOF){
         line_counter++;
-        current_type = check_type(current_line);     //checking the type of the current line : 0-code,1-data,2-string,3-entry,4-extern
+        current_type = check_type(current_line);   //checking the type of the current line : 0-code,1-data,2-string,3-entry,4-extern
         if(current_type){
             if(line_flag){ //if symbol is declared in this line
                 get_symbol(current_line,symbol_name);
+                // need to check if the symbol is declared 
                 add_symbol(symbol_name,DC,data);
             }
             if(current_type == entry) //handling with entry happens in the second pass
@@ -39,10 +40,11 @@ int first_pass(FILE *fp, char *file_name)
         }
         else{  //instruction line
             if(line_flag){
-                add_symbol(symbol_name,IC+LOAD_SPACE,code);
+                // need to check if the symbol is declared
+                add_symbol(symbol_name,IC,code);
             }
-            command = get_command(current_type,line_flag); //if -1 error, else return the index of the command.
-            //code_code(current_line,IC);
+            command = get_command(current_line,line_flag); //if -1 error, else return the index of the command.
+            //code_instraction(current_line,command,line_flag); //getting the line, Instraction ,the command index, and line flag - If there is a symbol or not
             //
             //
             //
@@ -50,7 +52,7 @@ int first_pass(FILE *fp, char *file_name)
     
    
     
-    }//end of while
+    }//end of while 
     
 
     return 1;

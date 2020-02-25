@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <stdio.h> 
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -12,6 +12,7 @@
 #define MAX_WORDS 4096
 #define LOAD_SPACE 100
 #define SYMBOL_MAX_LENGTH 32
+#define NO_COMMAND -1
 
 extern memory;
 

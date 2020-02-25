@@ -1,4 +1,4 @@
-#include "assembly.h"
+#include "assembly.h" 
 
 int first_pass(FILE *, char *);
 int second_pass(FILE *, char *);
@@ -7,7 +7,7 @@ int second_pass(FILE *, char *);
 int main(int argc, char **argv)
 {
    word *memory = (word *)malloc(sizeof(word)*MAX_WORDS);
-   word *tmp_data_memory = (word *)malloc(sizeof(word));
+   word *data_memory = (word *)malloc(sizeof(word)*MAX_WORDS);
    FILE *current_fp;
    char *file_name;
    int i = 1;
