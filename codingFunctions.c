@@ -10,7 +10,7 @@
 
 void code_data(char *line,enum line_type type,int symbol_flag)
 {
-    char *token,c,str_num[MAX_NUM_LENGTH];
+    char *token,c,str_num[MAX_NUM_SIZE];
     int count,j,i,length,L,num;
 
     token = strtok(line," \t"); //Extracting the command from the line (.data / .string)
@@ -112,7 +112,7 @@ void code_data(char *line,enum line_type type,int symbol_flag)
             i++;
             num = atoi(str_num); //Coverting the string to integer
             data_memory[DC+L] = num;
-            L++; //Incresing L for the current number that scanned
+            
         
         }
 

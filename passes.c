@@ -25,8 +25,8 @@ int first_pass(FILE *fp, char *file_name)
         current_type = check_type(current_line);   //checking the type of the current line : 0-code,1-data,2-string,3-entry,4-extern
         if(current_type){
             if(line_flag){ //if symbol is declared in this line
-                get_symbol(current_line,symbol_name);
-                // need to check if the symbol is declared 
+                get_symbol(current_line,symbol_name); //puts the symbol inside symbol_name. if symbol is invalid, symbol_name equals "\n\0"
+                 
                 add_symbol(symbol_name,DC,data);
             }
             if(current_type == entry) //handling with entry happens in the second pass
@@ -40,7 +40,6 @@ int first_pass(FILE *fp, char *file_name)
         }
         else{  //instruction line
             if(line_flag){
-                // need to check if the symbol is declared
                 add_symbol(symbol_name,IC,code);
             }
             command = get_command(current_line,line_flag); //if -1 error, else return the index of the command.

@@ -21,7 +21,7 @@
 #define SOURCE_SHIFT 7
 #define TARGET_SHIFT 3
 #define IMMIDIATE_SHIFT 3
-
+#define ERROR_SIGN -1
 #define NOT_OK_CHAR(p)  ( !(*p) || *p=='\n'|| !p)
 
 
@@ -42,7 +42,7 @@ char *registers[REGISTER_NUM]={"r0","r1","r2","r3","r4","r5","r6","r7"}; //all r
 //----------ENUMS-------------------------------------------------
 enum line_type{code,data,string,entry,external}; //locations of symbols
 enum address_type{immediate,direct,register_indirect,register_direct}; //addresses types
-enum commandE{mov,cmp,add,sum,clr,not,inc,dec,jmp,bne,red,prn,jsr,rts,stop}; //opcodes values
+enum commandE{mov,cmp,add,sub,lea,clr,not,inc,dec,jmp,bne,red,prn,jsr,rts,stop}; //opcodes values
 //----------Typedef--------------------------------------------------
 typedef unsigned short int word; //memory cell in the computer
 //----------Functions------------------------------------------------

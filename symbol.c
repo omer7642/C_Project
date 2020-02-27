@@ -14,6 +14,7 @@ void add_symbol(char * symbolN,int memory_value ,enum line_type type){
             fprintf(stdout,"symbol-table: error - trying to declare an exist symbol. (line %d) \n",line_counter);
             return;
         }
+        
     tmp = (symbol *)malloc(sizeof(symbol));
     strcpy(tmp->symbol_name,symbolN); //adding name
     tmp->location = type;             //adding data type
