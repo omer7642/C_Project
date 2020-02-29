@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "symbol.h": "c",
+        "*.tcc": "c"
+    }
+}

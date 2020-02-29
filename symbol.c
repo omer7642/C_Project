@@ -61,3 +61,63 @@ void add_extern(char *line){
     add_symbol(token,EXT_VALUE,external);   
      
 }
+
+void update_data_symbol()
+{
+    symbol *curr = symbol_table;
+    while(curr)
+    {
+        if(curr->location == data || curr->location == string) 
+            curr->value += (IC++) + 100;
+        curr = curr->next_symbol;
+    }
+}
+
+
+int add_emtry(char *symbol_name)
+{
+    int isFound = FALSE; //the argument we return eventually
+    symbol *curr = symbol_table; //represents the current node we are checking
+
+    while(curr) //going through the table
+    {
+        if(!strcmp(curr->symbol_name, symbol_name)) //if the current node has same symbol name , quit the loop, update to entry and update the isFound var
+        {
+            isFound = TRUE;
+            curr->location = entry;
+            break;
+        }
+        curr = curr->next_symbol;
+    }
+
+    return isFound;
+}
+
+int add_symbol_value(char *token, int index)
+{
+    symbol *curr = symbol_table ; //represents current node
+    int isFound = FALSE;
+
+    while(curr) //looping through the table either until no symbol found or one is found
+    {
+        if(!strcmp(curr->symbol_name,token))
+        {
+            if(curr->location == external) //if its an external label. it has no address (address 0) amd the E indicator is up
+            {
+                memory[index] = E;
+                isFound = TRUE;
+                break;
+            }
+
+            else //if its not an external label, than its a label defined in the file and value is E with the addition of the address it is defined
+            {
+                memory[index] = R | (curr->value << 3);
+                isFound = TRUE;
+                break;
+            }
+            
+        }
+    }
+
+    return isFound;
+}
