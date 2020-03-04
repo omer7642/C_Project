@@ -8,13 +8,17 @@ void add_symbol(char * symbolN,int memory_value ,enum line_type type){
 
     //checking if the symbol exist
     tmp = symbol_table;
+
+    printf("Started add symbol\n"); //debugging
     while(tmp)
-        if(strcmp(tmp->symbol_name,symbolN)==0){
+    {
+        if(strcmp(tmp->symbol_name,symbolN)==0){ //in case the symbol is exiting
             error_flag=1;
             fprintf(stdout,"symbol-table: error - trying to declare an exist symbol. (line %d) \n",line_counter);
             return;
         }
-        
+        tmp = tmp->next_symbol;
+    }
     tmp = (symbol *)malloc(sizeof(symbol));
     strcpy(tmp->symbol_name,symbolN); //adding name
     tmp->location = type;             //adding data type
@@ -68,13 +72,13 @@ void update_data_symbol()
     while(curr)
     {
         if(curr->location == data || curr->location == string) 
-            curr->value += (IC++) + 100;
+            curr->value += IC+100;
         curr = curr->next_symbol;
     }
 }
 
 
-int add_emtry(char *symbol_name)
+int add_entry(char *symbol_name)
 {
     int isFound = FALSE; //the argument we return eventually
     symbol *curr = symbol_table; //represents the current node we are checking
@@ -100,10 +104,20 @@ int add_symbol_value(char *token, int index)
 
     while(curr) //looping through the table either until no symbol found or one is found
     {
-        if(!strcmp(curr->symbol_name,token))
+        if( strcmp(curr->symbol_name,token) == 0)
         {
-            if(curr->location == external) //if its an external label. it has no address (address 0) amd the E indicator is up
+            if(curr->location == external) //if its an external label. it has no address (address 0) and the E indicator is up
             {
+                if(curr->value==0)
+                {
+                    curr->value=index;
+                }
+
+                else //the usage of that is for the file print
+                {
+                    add_symbol(token,index,external);
+                }
+
                 memory[index] = E;
                 isFound = TRUE;
                 break;
@@ -111,13 +125,72 @@ int add_symbol_value(char *token, int index)
 
             else //if its not an external label, than its a label defined in the file and value is E with the addition of the address it is defined
             {
-                memory[index] = R | (curr->value << 3);
+                memory[index] = R | ( (curr->value) << 3);
                 isFound = TRUE;
                 break;
             }
             
         }
+        
+        curr = curr->next_symbol;
     }
 
     return isFound;
+}
+
+
+int get_symbol_amount(enum line_type type)
+{
+    symbol *p = symbol_table;
+    int count = 0;
+    while (p)
+    {
+        if(p->location == type)
+            count++;
+        p = p->next_symbol;
+    }
+
+    return count;        
+    
+}
+
+// I dont think this function is needed
+
+void add_entry_symbol(char *current_line,int symbol_flag)
+{
+    char *token;
+    token = strtok(current_line," \t"); //getting the first word of the line
+    if(symbol_flag)
+    {
+        fprintf(stderr,"Warning: defining a symbol in entry line\n");
+        token = strtok(NULL," \t");
+    }
+
+    token = strtok(NULL," \t"); //getting the symbol name
+
+    if(isSavedPhrase(token))
+    {
+        error_flag = 1;
+        fprintf(stderr,"assembly: using a saved word for symbol name\n");
+        return;
+    }
+
+    add_symbol(token,0,entry);
+
+}
+
+void print_symbols(FILE *fp, enum line_type type)
+{
+    symbol *ptr = symbol_table;
+    
+    while(ptr)
+    {
+        if(ptr->location == type)
+        {
+            fprintf(fp,"%s %#4d\n",ptr->symbol_name,ptr->value);
+        }
+
+        ptr = ptr->next_symbol;
+    }
+    return;
 }

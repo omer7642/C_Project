@@ -1,12 +1,15 @@
 #include "Input.h"
 
-char getline(FILE *fp,char *current_line)
+char get_line(FILE *fp,char *current_line)
 {
     unsigned int InputIndex = 0, ActualIndex = 0; //two indexes, one of input and another without the extra whitespaces
     char c; //the received character
     unsigned char isDeclaration = FALSE; //a flag for symbol declaration
     unsigned char isEmpty = TRUE; //a flag that says if line is empty
     c = fgetc(fp);
+
+    printf("started get line \n");//for debugging
+
     while(((c != '\n') && (isEmpty == TRUE)) || (c != EOF) || (InputIndex > MAX_LINE - 1))
     {
         if((c == ';') && isEmpty == TRUE) //if the first character in a line is a ';', then its a comment line and we treat it as
@@ -18,7 +21,7 @@ char getline(FILE *fp,char *current_line)
         if((c != ' ') && (c != '\t') && (c != '\n')) //adds valid characters to line, without whitespaces
         {
             if(c == ':') //if the ':' character appears, it means a symbol is declared in the line
-                isDeclaration == TRUE;
+                isDeclaration = TRUE;
             isEmpty = FALSE; //if we entered a valid character, the line isn't empty
             current_line[ActualIndex++] = c;
         }
@@ -52,10 +55,10 @@ char getline(FILE *fp,char *current_line)
     }
     if(c == EOF)
     {
-        if(isEmpty == TRUE) //last line is empty
+        //if(isEmpty == TRUE) //last line is empty
             return EOF;
-        else //last line isn't empty, so we will need to receive EOF on next time
-            fseek(fp, -1, SEEK_CUR); //return to previous fp position so next time we'll get EOF
+        //else //last line isn't empty, so we will need to receive EOF on next time
+            //return isDeclaration; //return to previous fp position so next time we'll get EOF
     }
     if(isDeclaration == TRUE)
         return TRUE;
@@ -96,8 +99,8 @@ enum line_type check_type(char *current_line)
 int get_command(char *current_line,unsigned char line_flag)
 {
     char *command = (char *)malloc(sizeof(char) * (MAX_COMMAND_LENGTH + 1)); 
-    int i; //the index we use to access current_line
-    int j; //the index we use on command
+    int i=0; //the index we use to access current_line
+    int j=0; //the index we use on command
     if(line_flag) //if a symbol is declared in the line, skip the symbol and read command
         while(current_line[i++] != ' '); //skip symbol declaration, position i on the index of the first char in the opcode
 
@@ -147,13 +150,18 @@ int get_command(char *current_line,unsigned char line_flag)
     }
 }
 
-void get_symbol(char *current_line,char *symbol_name)
+char *get_symbol(char *current_line,char *symbol_name)
 {
-    int i = 0; //index of iteration
+    int i = 0,j=0; //index of iteration
     char c;
+    while(isspace(current_line[i]))
+        i++;
+
+    j=i;
+
     while((i <= SYMBOL_MAX_LENGTH) && (c = current_line[i] != ':'))
     {
-        if(i == 0)
+        if(i == j)
         {
             if((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) //if first character is a letter
                 symbol_name[i] = c;
@@ -162,7 +170,7 @@ void get_symbol(char *current_line,char *symbol_name)
                 error_flag = TRUE;
                 symbol_name = "\n\0";
                 fprintf(stdout, "invalid symbol name on line %d", line_counter);
-                return;
+                return NULL;
             }
         }
 
@@ -177,7 +185,7 @@ void get_symbol(char *current_line,char *symbol_name)
                 error_flag = TRUE;
                 symbol_name = "\n\0";
                 fprintf(stdout, "invalid symbol name on line %d", line_counter);
-                return;
+                return NULL;
             }
         }
         i++;        //advance the index by 1
@@ -187,8 +195,8 @@ void get_symbol(char *current_line,char *symbol_name)
     if(isSavedPhrase(symbol_name))
     {
         error_flag = TRUE;
-        fprintf(stdout, "declared a symbol that's a reserved phrase in line %d". line_counter);
-        return;
+        fprintf(stdout, "declared a symbol that's a reserved phrase in line %d", line_counter);
+        return NULL;
     }
 
     else //if not a reserved phrase, then it's a legal symbol and thus can be returned
@@ -275,9 +283,10 @@ int get_address_type(char * operand)
         }
         curr_type = immediate;
     }
-    else if(operand[0] == '.')
+    
+    /*else if(operand[0] == '.')   Operand check applies only for intraction opcodes
     {
-        temp = (char *)malloc(sizeof(char) * MAX_COMMAND_LENGTH)
+        temp = (char *)malloc(sizeof(char) * MAX_COMMAND_LENGTH);
         i = 2;
         j = 0;
         while(operand[i] != '\0')
@@ -295,7 +304,7 @@ int get_address_type(char * operand)
             fprintf(stdout, "invalid addressing type in line %d", line_counter);
             return ERROR_SIGN;
         }
-    }
+    }*/
 
     else if(operand[0] == '*') 
     {
@@ -325,10 +334,8 @@ int get_address_type(char * operand)
         
     }
 
-    else //will check if that's a symbol name that's already in the symbol table
-    {
-        //to do later
-    }
+    else //probably a symbol name, the correctness of the symbol will be checked in the second pass
+        curr_type= direct;
 
     return curr_type;
     
@@ -336,14 +343,13 @@ int get_address_type(char * operand)
 
 int complement_2 (int num)
 {
-    int i; //iteration index
     num *= -1; //make the number positive.
     //issue a warning if the number is too high
     if(num >= MAX_VALUE)
         fprintf(stdout, "WARNING, number too large on line %d, data loss is applicable/", line_counter);
     num = ~num; //invert the bits in the number
-    num << BYTE * sizeof(int) - 11; //move and zero all the numbers left to the first 11 figures
-    num >> BYTE * sizeof(int) - 11 ;//move back
+    num <<= (BYTE * sizeof(int) - 11); //move and zero all the numbers left to the first 11 figures
+    num >>= (BYTE * sizeof(int) - 11);//move back
 
     num += 1; //add 1
 
