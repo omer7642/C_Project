@@ -300,10 +300,12 @@ int complement_2 (int num)
     if(num >= MAX_VALUE)
         fprintf(stdout, "WARNING, number too large on line %d, data loss is applicable/", line_counter);
     num = ~num; //invert the bits in the number
+    num += 1; //add 1
+    
     num <<= (BYTE * sizeof(int) - 11); //move and zero all the numbers left to the first 11 figures
     num >>= (BYTE * sizeof(int) - 11);//move back
 
-    num += 1; //add 1
+    
     printf("finished Complents 2 \n");
     return num;
 }

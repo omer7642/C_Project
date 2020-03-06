@@ -7,6 +7,7 @@
 #define OPCODE_NUM 16
 #define MAX_LINE 81
 #define REGISTER_NUM 8
+#define BYTE 8
 #define GUIDES_NUM 4
 #define MAX_WORDS 4096
 #define LOAD_SPACE 100

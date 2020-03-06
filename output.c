@@ -23,6 +23,8 @@ void make_object_file(char *filename)
     strcpy(obj_file,filename);
     strcat(obj_file,OBJECT_POSTFIX);
 
+
+
     if( !IC && !DC )
     {
         fprintf(stderr,"Assembly: no memory to print. object file not created.\n");
@@ -39,11 +41,11 @@ void make_object_file(char *filename)
         return;
     }
 
-    fprintf(objfp,"\n\t %d %d\n",IC,DC); // The first line of the file - the values of IC & DC
+    fprintf(objfp,"\n\t%d %d\n",IC,DC); // The first line of the file - the values of IC & DC
     
-    while(temp_IC < IC) //printing all the data
+    while(temp_IC < (IC+DC) ) //printing all the data
     {
-        fprintf(objfp,"\t%4d \t %5o\n",temp_IC+LOAD_SPACE,memory[temp_IC]);
+        fprintf(objfp,"%04d %05o\n",temp_IC+LOAD_SPACE,memory[temp_IC]);
         temp_IC++;
     }
 
@@ -103,6 +105,7 @@ void make_extern_file(char *filename)
         return;
 
     extfp = fopen(ext_file,"w");
+    
     if(!extfp)
     {
         fprintf(stderr,"assembly: an error accord when tried to open file %s. file not created\n",ext_file);

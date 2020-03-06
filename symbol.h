@@ -11,6 +11,7 @@
 #define E 1
 #define R 2
 #define A 4
+#define LOAD_SPACE 100
 //-------------VARIABLES-----------------------
 extern word *memory;
 extern int line_counter;

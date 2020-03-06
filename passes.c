@@ -21,6 +21,9 @@ void first_pass(FILE *fp, char *file_name)
     printf("started first pass\n");
 
     while( (line_flag = get_line(fp,current_line))!= EOF){
+
+        printf("\nline: %d  IC: %d  DC:%d \n",line_counter,IC,DC);
+
         line_counter++;
         if(line_flag == EMPTY_LINE)
             continue;
@@ -88,7 +91,7 @@ void first_pass(FILE *fp, char *file_name)
     update_data_symbol();//adding to all data symbol the value of IC+100 because the merging of the data structures
 
     //for debugging
-    printf("END OF FIRST PASS\n");
+    printf("\n\nEND OF FIRST PASS The valude of DC:%d IC:%d \n\n",DC,IC);
 
     return;
 }

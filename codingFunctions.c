@@ -26,7 +26,9 @@ void code_data(char *line,enum line_type type,int symbol_flag)
         token = strtok(NULL,"\0"); //getting the string from the line
         L = strlen(token);
         
-        if(token[0]!='\"' && token[L-1]!='\"') //cheking syntax of string
+        printf("\n the current string is %s \n",token);
+
+        if(token[0]!='\"' || token[L-1]!='\"') //cheking syntax of string
         {
             error_flag=1;
             fprintf(stdout,"assembler: error - missing quotation marks (line %d)\n",line_counter);
@@ -35,8 +37,8 @@ void code_data(char *line,enum line_type type,int symbol_flag)
         
         EXIT_IF_RUNOUT_MEMORY
 
-        i=0;
-        while (i<L)
+        i=1;j=0;
+        while (token[i]!='\"')
         {
             if(token[i]<MIN_VISABLE_ASCII || token[i] >MAX_VISABLE_ASCII)
             {
@@ -44,11 +46,12 @@ void code_data(char *line,enum line_type type,int symbol_flag)
                 fprintf(stdout,"assembler: Invalid character in .string (line %d)\n",line_counter);
                 return;
             } 
-           data_memory[DC+i] = token[i++]; //Inserting the 
+           data_memory[DC+j] = token[i]; //Inserting the 
+           i++; j++;
         }
 
-        data_memory[i]='\0';
-        DC += L+END_CHAR_SPACE;
+        data_memory[j]='\0';
+        DC += L+END_CHAR_SPACE-2;
         
     }
     else{ //type == data
@@ -72,7 +75,7 @@ void code_data(char *line,enum line_type type,int symbol_flag)
         EXIT_IF_RUNOUT_MEMORY
 
         i=0;                     
-        for(L=1;L<=count;L++){  //i - index of token ,  j -loop variable index of str_num , L - increasing each time a number scanned without problem
+        for(L=0;L<count;L++){  //i - index of token ,  j -loop variable index of str_num , L - increasing each time a number scanned without problem
             int j=0;
            
             while(isspace(token[i])) //skipping spaces
@@ -107,15 +110,27 @@ void code_data(char *line,enum line_type type,int symbol_flag)
                 i++;
             
             if(token[i]!=',')
-                if(L!=count){
+                if(L!=count-1){
                     error_flag=1;
                     L--; //the previous Increasing was for nothing (6 lines Above)
                     fprintf(stdout,"assembler: error - Missing comma (line %d)\n",line_counter);
                     return;
                 }   
             i++;
-            num = atoi(str_num); //Coverting the string to integer
+
+            //Coverting the string to integer
+            if(*str_num == '-'){
+                num = atoi(str_num+1);
+                num *= (-1);
+            }
+            else
+            {
+                num = atoi(str_num);
+            }
+            
+             
             data_memory[DC+L] = num;
+            data_memory[DC+L] &=  ~( 1<<(sizeof(short) * BYTE)-1);
            
         
         }
@@ -139,7 +154,6 @@ void code_instraction(char *line,int command_ind,int symbol_flag)
     EXIT_IF_RUNOUT_MEMORY
     strcpy(temp_line,line);
 
-    printf("\ncoding instractin - LINE =  %s\n",line);
 
     switch (command_ind)
     {
@@ -149,7 +163,6 @@ void code_instraction(char *line,int command_ind,int symbol_flag)
         case add:
         case sub:
         case lea:
-                    printf("Case - Two opernd opcodes the current opcode is %s\n",opcodes[command_ind]);
                     memory[IC] = A; //decoding The A,R,E FIELD
                     memory[IC] |= (command_ind << OPCODE_SHIFT); //decoding the opcode
                     L = 3; //one word for the coding and another two for the two operands
@@ -193,8 +206,10 @@ void code_instraction(char *line,int command_ind,int symbol_flag)
                                 number = atoi(token+1);
                                 if(number<0)
                                   number = complement_2(number); //if the number is minus need to convert it to 14-3 bits
+                                
                                 memory[IC+1] = A;
                                 memory[IC+1] |= (number << IMMIDIATE_SHIFT);
+                                memory[IC+1] &=  ~( 1<<(sizeof(short) * BYTE)-1);
                                 break;
                     
                             case direct:
@@ -204,7 +219,7 @@ void code_instraction(char *line,int command_ind,int symbol_flag)
                             case register_indirect:
                                 memory[IC+1] = A;
                                 while(token){    //seraching the number of the register
-                                    if( isdigit(*token) )
+                                    if(isdigit(*token) )
                                         break;
                                     token++;
                                 }
@@ -249,8 +264,10 @@ void code_instraction(char *line,int command_ind,int symbol_flag)
                                 number = atoi(token+1);
                                 if(number<0)
                                   number = complement_2(number); //if the number is minus need to convert it to 14-3 bits
+                                  
                                 memory[IC+2] = A;
                                 memory[IC+2] |= (number << IMMIDIATE_SHIFT); //need to be in bits 3-14
+                                memory[IC+2] &=  ~( 1<<(sizeof(short) * BYTE)-1);
                                 break;
                     
                             case direct:
@@ -310,7 +327,6 @@ void code_instraction(char *line,int command_ind,int symbol_flag)
         case prn:
         case jsr:
                 {
-                    printf("Case - One opernd opcodes \n");
                     memory[IC] = A; //decoding The A,R,E FIELD
                     memory[IC] |= (command_ind << OPCODE_SHIFT); //decoding the opcode
                     L = 2; //one word for the coding and another one for the target operands
@@ -352,10 +368,12 @@ void code_instraction(char *line,int command_ind,int symbol_flag)
                                     token++;
                                 }
                             number = atoi(token+1);
-                            if(number<0)
+                            /*if(number<0)
                                 number = complement_2(number); //if the number is minus need to convert it to 14-3 bits
+                                */
                             memory[IC+1] = A;
                             memory[IC+1] |= (number << IMMIDIATE_SHIFT); //need to be in bits 3-14
+                            memory[IC+1] &=  ~( 1<<(sizeof(short) * BYTE)-1);
                             break;
 
                         
@@ -399,7 +417,6 @@ void code_instraction(char *line,int command_ind,int symbol_flag)
         case rts:
         case stop:
                 {
-                    printf("Case - NO opernd opcodes \n");
                     memory[IC] = A; //decoding The A,R,E FIELD
                     memory[IC] |= (command_ind << OPCODE_SHIFT); //decoding the opcode
                     L = 1; //one word for the coding

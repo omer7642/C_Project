@@ -113,12 +113,12 @@ int add_symbol_value(char *token, int index)
             {
                 if(curr->value==0)
                 {
-                    curr->value=index;
+                    curr->value=index+LOAD_SPACE;
                 }
 
                 else //the usage of that is for the file print
                 {
-                    add_symbol(token,index,external);
+                    add_symbol(token,index+LOAD_SPACE,external);
                 }
 
                 memory[index] = E;
@@ -126,26 +126,11 @@ int add_symbol_value(char *token, int index)
                 break;
             }
 
-            if(curr->location == entry) //if its an external label. it has no address (address 0) and the E indicator is up
-            {
-                if(curr->value==0)
-                {
-                    curr->value=index;
-                }
-
-                else //the usage of that is for the file print
-                {
-                    add_symbol(token,index,entry);
-                }
-
-                memory[index] = R;
-                isFound = TRUE;
-                break;
-            }
 
             else //if its not an external label, than its a label defined in the file and value is E with the addition of the address it is defined
             {
-                memory[index] = R | ( (curr->value) << 3);
+                memory[index] = R ;
+                memory[index] |= ( (curr->value) << 3);
                 isFound = TRUE;
                 break;
             }
@@ -207,7 +192,7 @@ void print_symbols(FILE *fp, enum line_type type)
     {
         if(ptr->location == type)
         {
-            fprintf(fp,"%s %#4d\n",ptr->symbol_name,ptr->value);
+            fprintf(fp,"%s %4d\n",ptr->symbol_name,ptr->value);
         }
 
         ptr = ptr->next_symbol;
