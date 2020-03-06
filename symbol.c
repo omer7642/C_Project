@@ -9,16 +9,19 @@ void add_symbol(char * symbolN,int memory_value ,enum line_type type){
     //checking if the symbol exist
     tmp = symbol_table;
 
-    printf("Started add symbol\n"); //debugging
-    while(tmp)
-    {
-        if(strcmp(tmp->symbol_name,symbolN)==0){ //in case the symbol is exiting
-            error_flag=1;
-            fprintf(stdout,"symbol-table: error - trying to declare an exist symbol. (line %d) \n",line_counter);
-            return;
+    printf("Started add symbol - %s \n",symbolN); //debugging
+    if(type!=entry && type!=external)
+        while(tmp)
+        {
+            if(strcmp(tmp->symbol_name,symbolN)==0)//in case the symbol is exiting
+            { 
+                error_flag=1;
+                fprintf(stdout,"symbol-table: error - trying to declare an exist symbol. (line %d) \n",line_counter);
+                return;
+            }
+            tmp = tmp->next_symbol;
         }
-        tmp = tmp->next_symbol;
-    }
+
     tmp = (symbol *)malloc(sizeof(symbol));
     strcpy(tmp->symbol_name,symbolN); //adding name
     tmp->location = type;             //adding data type
@@ -26,7 +29,7 @@ void add_symbol(char * symbolN,int memory_value ,enum line_type type){
     tmp->next_symbol=NULL;            //initialize the pointer
 
     if(!symbol_table)       //if the table empty
-        symbol_table = tmp;
+        symbol_table = tmp; 
     
     else{
         p = symbol_table;
@@ -119,6 +122,23 @@ int add_symbol_value(char *token, int index)
                 }
 
                 memory[index] = E;
+                isFound = TRUE;
+                break;
+            }
+
+            if(curr->location == entry) //if its an external label. it has no address (address 0) and the E indicator is up
+            {
+                if(curr->value==0)
+                {
+                    curr->value=index;
+                }
+
+                else //the usage of that is for the file print
+                {
+                    add_symbol(token,index,entry);
+                }
+
+                memory[index] = R;
                 isFound = TRUE;
                 break;
             }

@@ -16,7 +16,7 @@ void first_pass(FILE *fp, char *file_name)
     
     IC=0;
     DC=0;
-    line_counter=0;
+    line_counter=0; 
 
     printf("started first pass\n");
 
@@ -27,20 +27,23 @@ void first_pass(FILE *fp, char *file_name)
         current_type = check_type(current_line);   //checking the type of the current line : 0-code,1-data,2-string,3-entry,4-extern
         if(current_type)
         { 
+            printf("current line type - data\n");
             if(line_flag){ //if symbol is declared in this line
                 get_symbol(current_line,symbol_name);
-                if(*symbol_name == '\n')
+                printf("the symbol return from get symbol in data line is - %s\n",symbol_name);
+                if(symbol_name == NULL || !(*symbol_name))
                 {
                     error_flag = 1;
                     fprintf(stdout,"assembly: Invaild symbol name (line %d)\n",line_counter);
                 } 
-                add_symbol(symbol_name,DC+LOAD_SPACE,current_type);
+                add_symbol(symbol_name,DC,current_type);
             }
 
-            /*if(current_type == entry)  //I dont think this action needed
+            if(current_type == entry)  //I dont think this action needed
             {   
-                add_entry_symbol(current_line,line_flag);
-            }*/
+                //add_entry_symbol(current_line,line_flag);
+                continue;
+            }
 
             else if(current_type == external)
             {
@@ -59,27 +62,29 @@ void first_pass(FILE *fp, char *file_name)
             
             if(line_flag){
                 get_symbol(current_line,symbol_name);
-                if(*symbol_name == '\n') //sign that the symbol name in invalid
+                if(symbol_name == NULL || !(*symbol_name)) //sign that the symbol name in invalid
                 {
                     error_flag = 1;
                     fprintf(stdout,"assembly: Invaild symbol name (line %d)\n",line_counter);
                 } 
                 add_symbol(symbol_name,IC+LOAD_SPACE,code);
             }
+            printf("starting get command \n");
             command = get_command(current_line,line_flag); //if -1 error, else return the index of the command.
+            printf("starting code instraction \n");
             code_instraction(current_line,command,line_flag); //getting the line, Instraction ,the command index, and line flag - If there is a symbol or not
             
         }
    
     }//end of while
-
+    printf("finished while loop of first pass \n");
     //free the dynamic memory the we used in the function
         free(current_line);
         free(symbol_name);
     
     for(int i=IC ,j=0 ; j<DC ; j++,i++) //merging the two data structures;
         memory[i] = data_memory[j];
-
+    printf("starting update data symbol\n");
     update_data_symbol();//adding to all data symbol the value of IC+100 because the merging of the data structures
 
     //for debugging
@@ -91,11 +96,12 @@ void first_pass(FILE *fp, char *file_name)
 
 int second_pass(FILE *fp, char *file_name)
 {
-    int IC_temp=0 ,i,j,totalmemory,line_cnt_tmp=0, L;
+    int IC_temp=0 ,i=0,j=0,line_cnt_tmp=0, L;
     char *token,line_flag,command;
     enum line_type current_type; // type of the line (instruction,data,string,entry,external)
     enum address_type address,des_address,src_address;
     char *current_line = (char *)malloc(MAX_LINE); //holds the current command line
+    char *temp_line = (char *)malloc(MAX_LINE);
 
 
     EXIT_IF_RUNOUT_MEMORY
@@ -111,17 +117,19 @@ int second_pass(FILE *fp, char *file_name)
             fprintf(stdout,"assembly: returned EOF from the source file in the second pass \n");
             return 0;
         }
-
+        printf("second pass - current line : %s \n",current_line);
         line_cnt_tmp++;
         current_type = check_type(current_line);   //checking the type of the current line : 0-code,1-data,2-string,3-entry,4-extern
-        
+        strcpy(temp_line,current_line);
+
+
         if(current_type)
         {
 
             if (current_type == entry)
             {
                 
-                token = strtok(current_line," \t");
+                token = strtok(temp_line," \t");
                 if(line_flag)
                     token = strtok(NULL," \t");
 
@@ -162,7 +170,7 @@ int second_pass(FILE *fp, char *file_name)
             {
                 L=2; //this opcodes require two memory words
                 
-                token = strtok(current_line," \t");
+                token = strtok(temp_line," \t");
                 if(line_flag)
                     token = strtok(NULL," \t");
 
@@ -201,7 +209,7 @@ int second_pass(FILE *fp, char *file_name)
                 if(line_flag)
                     token = strtok(NULL," \t");
 
-                token = strtok(NULL," \t\n"); //getting the first operand
+                token = strtok(NULL,","); //getting the first operand
                 
                 if NOT_OK_CHAR(token){ //found an error in the second pass
                     L--;

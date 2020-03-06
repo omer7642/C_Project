@@ -11,11 +11,13 @@
 #define LOAD_SPACE 100
 
 typedef unsigned short int word; //memory cell in the computer
-extern enum line_type{code,data,string,entry,external}; //locations of symbols
-
+#ifndef ENUM
+#define ENUM
+enum line_type{code,data,string,entry,external}; //locations of symbols
+#endif
 
 extern short IC,DC;
-extern word *memory;
+extern word *memory; 
 
 void make_output(char *);
 void add_assembly_postfix(char *);

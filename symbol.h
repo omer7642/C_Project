@@ -30,7 +30,7 @@ typedef struct sym{
     struct sym *next_symbol;
 }symbol;
 
-typedef unsigned char BOOL;
+typedef unsigned char BOOL; 
 
 //-----------Functions------------------------
 

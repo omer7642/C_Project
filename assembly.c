@@ -1,4 +1,4 @@
-#include "assembly.h" 
+#include "assembly.h"  
 
 word *memory;
 word *data_memory;
@@ -34,7 +34,8 @@ int main(int argc, char **argv)
         first_pass(current_fp,file_name);// the first pass
 
         free (data_memory); //merging the data structures in the end of first pass
-    
+        
+        printf("entering second pass\n");
         second_pass(current_fp,file_name); //the second pass
 
     

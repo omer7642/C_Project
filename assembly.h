@@ -15,4 +15,4 @@ typedef unsigned short int word; //memory cell in the computer
 void first_pass(FILE *, char *);
 void second_pass(FILE *,char *);
 void add_assembly_postfix(char *);
-void make_output(char *);
+void make_output(char *); 

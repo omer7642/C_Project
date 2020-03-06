@@ -11,19 +11,22 @@
 void code_data(char *line,enum line_type type,int symbol_flag)
 {
     char *token,c,str_num[MAX_NUM_LENGTH];
-    int count,j,i,length,L,num;
+    int count=0,j=0,i=0,length,L,num;
+    char *temp_line = (char *)malloc(MAX_LINE);
+    
+    strcpy(temp_line,line);
 
-    token = strtok(line," \t"); //Extracting the command from the line (.data / .string)
+    token = strtok(temp_line," "); //Extracting the command from the line (.data / .string)
     if(symbol_flag)
-        token = strtok(NULL," \t"); //if there is a symbol so the previous instraction extracted the symbol and now we extract the command
+        token = strtok(NULL," "); //if there is a symbol so the previous instraction extracted the symbol and now we extract the command
     
 
     if(type == string)
     {
-        token = strtok(NULL," \t"); //getting the string from the line
+        token = strtok(NULL,"\0"); //getting the string from the line
         L = strlen(token);
         
-        if(token[0]!='\"' || token[L-1]!='\"') //cheking syntax of string
+        if(token[0]!='\"' && token[L-1]!='\"') //cheking syntax of string
         {
             error_flag=1;
             fprintf(stdout,"assembler: error - missing quotation marks (line %d)\n",line_counter);
@@ -50,7 +53,7 @@ void code_data(char *line,enum line_type type,int symbol_flag)
     }
     else{ //type == data
         
-        token = strtok(NULL,"\n");
+        token = strtok(NULL,"\0");
         length = strlen(token);
         
         if(!token){ //in case this no parameters.
@@ -71,6 +74,7 @@ void code_data(char *line,enum line_type type,int symbol_flag)
         i=0;                     
         for(L=1;L<=count;L++){  //i - index of token ,  j -loop variable index of str_num , L - increasing each time a number scanned without problem
             int j=0;
+           
             while(isspace(token[i])) //skipping spaces
                 i++;
 
@@ -103,7 +107,7 @@ void code_data(char *line,enum line_type type,int symbol_flag)
                 i++;
             
             if(token[i]!=',')
-                if(L!=count-1){
+                if(L!=count){
                     error_flag=1;
                     L--; //the previous Increasing was for nothing (6 lines Above)
                     fprintf(stdout,"assembler: error - Missing comma (line %d)\n",line_counter);
@@ -119,6 +123,7 @@ void code_data(char *line,enum line_type type,int symbol_flag)
         DC += L;
     
     } 
+    free(temp_line);
 }
 
 ////////////////   INSTRACTION //////////////////
@@ -126,11 +131,15 @@ void code_data(char *line,enum line_type type,int symbol_flag)
 void code_instraction(char *line,int command_ind,int symbol_flag)
 {
     char *token, src_str[OPERAND_MAX_LENGTH],des_str[OPERAND_MAX_LENGTH];
+    char *temp_line = (char *)malloc(MAX_LINE);
     int number,L=0,i=0;
     enum address_type src_address, des_address;
     unsigned mask = 1;
 
     EXIT_IF_RUNOUT_MEMORY
+    strcpy(temp_line,line);
+
+    printf("\ncoding instractin - LINE =  %s\n",line);
 
     switch (command_ind)
     {
@@ -140,17 +149,18 @@ void code_instraction(char *line,int command_ind,int symbol_flag)
         case add:
         case sub:
         case lea:
+                    printf("Case - Two opernd opcodes the current opcode is %s\n",opcodes[command_ind]);
                     memory[IC] = A; //decoding The A,R,E FIELD
                     memory[IC] |= (command_ind << OPCODE_SHIFT); //decoding the opcode
                     L = 3; //one word for the coding and another two for the two operands
 
-                    token = strtok(line," \t"); //skipping the first word
+                    token = strtok(temp_line," "); //skipping the first word
                     if(symbol_flag)
-                        token = strtok(NULL," \t"); // if there is a symbol, skipping again.
+                        token = strtok(NULL," "); // if there is a symbol, skipping again.
                    
-                    token = strtok(NULL,","); //getting out the source operand
+                    token = strtok(NULL," ,"); //getting out the source operand
 
-                    if NOT_OK_CHAR(token) //in-case line with no opernad
+                    if (!token) //in-case line with no opernad
                     {   
                         error_flag=1;
                         printf("assembly: Instraction %s Have No Operand (line %d)\n",opcodes[command_ind],line_counter);
@@ -214,7 +224,6 @@ void code_instraction(char *line,int command_ind,int symbol_flag)
                         }//end of switch source
 
                     token = strtok(NULL," \n\t"); //getting out the target operand
-                    
                     des_address = get_address_type(token);  //getting the address type of the target operand
                     if(des_address == ERROR)
                         {
@@ -301,17 +310,18 @@ void code_instraction(char *line,int command_ind,int symbol_flag)
         case prn:
         case jsr:
                 {
+                    printf("Case - One opernd opcodes \n");
                     memory[IC] = A; //decoding The A,R,E FIELD
                     memory[IC] |= (command_ind << OPCODE_SHIFT); //decoding the opcode
                     L = 2; //one word for the coding and another one for the target operands
 
-                    token = strtok(line," \t"); //skipping the first word
+                    token = strtok(temp_line," \t"); //skipping the first word
                     if(symbol_flag)
                         token = strtok(NULL," \t"); // if there is a symbol, skipping again.
 
                     token = strtok(NULL," \t\n"); //getting the target operand
 
-                    if NOT_OK_CHAR(token) //in-case line with no opernad
+                    if (!token) //in-case line with no opernad
                     {   
                         error_flag=1;
                         printf("assembly: Instraction %s Have No Operand (line %d)\n",opcodes[command_ind],line_counter);
@@ -389,11 +399,12 @@ void code_instraction(char *line,int command_ind,int symbol_flag)
         case rts:
         case stop:
                 {
+                    printf("Case - NO opernd opcodes \n");
                     memory[IC] = A; //decoding The A,R,E FIELD
                     memory[IC] |= (command_ind << OPCODE_SHIFT); //decoding the opcode
                     L = 1; //one word for the coding
 
-                    token = strtok(line," \t"); //skipping the first word
+                    token = strtok(temp_line," \t"); //skipping the first word
                     if(symbol_flag)
                         token = strtok(NULL," \t"); // if there is a symbol, skipping again.
                     
@@ -419,7 +430,7 @@ void code_instraction(char *line,int command_ind,int symbol_flag)
     } // end of opcodes switch
 
 
-
+     free(temp_line);
 } // end of function code_instraction
 
 

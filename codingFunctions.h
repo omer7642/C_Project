@@ -5,6 +5,7 @@
 
 
 #define OPCODE_NUM 16
+#define MAX_LINE 81
 #define REGISTER_NUM 8
 #define GUIDES_NUM 4
 #define MAX_WORDS 4096
@@ -13,7 +14,7 @@
 #define MAX_NUM_LENGTH 50
 #define MIN_VISABLE_ASCII 32
 #define MAX_VISABLE_ASCII 127
-#define OPERAND_MAX_LENGTH 50
+#define OPERAND_MAX_LENGTH 50 
 #define A 4
 #define R 2
 #define E 1
@@ -29,7 +30,7 @@
 #define CHECK_MEMORY (DC+IC >= MAX_WORDS) //Checking if the total Words in the memory is too much
 #define EXIT_IF_RUNOUT_MEMORY {\
     if CHECK_MEMORY {\
-        fprintf(stdout,"assembler: RUN OUT OF MEMORY!\n");\
+        fprintf(stderr,"assembler: RUN OUT OF MEMORY!\n");\
         exit(0);\
     }\
 }

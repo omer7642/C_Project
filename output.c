@@ -16,7 +16,7 @@ void make_output(char *file_name)
 
 void make_object_file(char *filename)
 {
-    short temp_DC = 0, temp_IC = 0;
+    short temp_DC = 0, temp_IC = 0; 
     FILE *objfp;
     char *obj_file = (char *) malloc ( strlen(filename) + strlen(OBJECT_POSTFIX) + EXTRA_SPACE );
     
@@ -43,7 +43,7 @@ void make_object_file(char *filename)
     
     while(temp_IC < IC) //printing all the data
     {
-        fprintf(objfp,"\t%#4d %#5o\n",temp_IC+LOAD_SPACE,memory[temp_IC]);
+        fprintf(objfp,"\t%4d \t %5o\n",temp_IC+LOAD_SPACE,memory[temp_IC]);
         temp_IC++;
     }
 
@@ -65,7 +65,8 @@ void make_entry_file(char *filename)
     strcat(ent_file,ENTRY_POSTFIX);
 
     ent_count = get_symbol_amount(entry);
-    
+    printf("output - ent amout is %d \n",ent_count);
+
     if(ent_count==0)
         return;
 
@@ -92,9 +93,11 @@ void make_extern_file(char *filename)
     int ext_count;
 
     strcpy(ext_file,filename);
-    strcat(ext_file,ENTRY_POSTFIX);
+    strcat(ext_file,EXTERN_POSTFIX);
 
     ext_count = get_symbol_amount(external);
+    printf("output - ext amout is %d \n",ext_count);
+
 
     if(ext_count==0)
         return;
