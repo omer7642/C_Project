@@ -15,7 +15,7 @@
 extern word *memory;
 extern int line_counter;
 extern unsigned char error_flag;
-extern  short IC;
+extern short IC;
 //-------------ENUMS-----------------------
 
 extern enum line_type{code,data,string,entry,external}; //locations of symbols

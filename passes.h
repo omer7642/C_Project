@@ -36,6 +36,7 @@
 enum line_type{code,data,string,entry,external}; //locations of symbols
 enum address_type{immediate,direct,register_indirect,register_direct}; //addresses types
 enum commandE{mov,cmp,add,sub,lea,clr,not,inc,dec,jmp,bne,red,prn,jsr,rts,stop}; //opcodes values
+#define EMPTY_LINE 2
 #endif
 
 //----------Typedef--------------------------------------------------

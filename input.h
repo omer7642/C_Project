@@ -6,6 +6,7 @@
 #define BYTE 8
 #define MAX_COMMAND_LENGTH 5
 #define ERROR_SIGN -1
+#define EMPTY_LINE 2
 
 extern unsigned char error_flag;
 extern int line_counter;

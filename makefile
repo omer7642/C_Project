@@ -10,6 +10,7 @@ passes.o: passes.c passes.h
 
 symbol.o: symbol.c symbol.h
 	gcc -c -Wall symbol.c -o symbol.o
+
 input.o: input.c input.h
 	gcc -c -Wall input.c -o input.o
 
@@ -18,3 +19,6 @@ assembly.o: assembly.c assembly.h
 
 output.o: output.c output.h 
 	gcc -c -Wall output.c -o output.o
+
+clean:
+	rm -rf *.o

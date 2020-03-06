@@ -22,6 +22,8 @@ void first_pass(FILE *fp, char *file_name)
 
     while( (line_flag = get_line(fp,current_line))!= EOF){
         line_counter++;
+        if(line_flag == EMPTY_LINE)
+            continue;
         current_type = check_type(current_line);   //checking the type of the current line : 0-code,1-data,2-string,3-entry,4-extern
         if(current_type)
         { 
