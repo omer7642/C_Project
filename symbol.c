@@ -6,29 +6,28 @@ void add_symbol(char * symbolN,int memory_value ,enum line_type type){
     symbol *tmp,*p;
     unsigned flag = 0;
 
-    //checking if the symbol exist
+    /*checking if the symbol exist*/
     tmp = symbol_table;
 
-    printf("Started add symbol - %s \n",symbolN); //debugging
     if(type!=entry && type!=external)
         while(tmp)
         {
-            if(strcmp(tmp->symbol_name,symbolN)==0)//in case the symbol is exiting
+            if(strcmp(tmp->symbol_name,symbolN)==0)/*in case the symbol is exiting*/
             { 
                 error_flag=1;
-                fprintf(stdout,"symbol-table: error - trying to declare an exist symbol. (line %d) \n",line_counter);
+                fprintf(stderr,"symbol-table: error - trying to declare an exist symbol. (line %d) \n",line_counter);
                 return;
             }
             tmp = tmp->next_symbol;
         }
 
     tmp = (symbol *)malloc(sizeof(symbol));
-    strcpy(tmp->symbol_name,symbolN); //adding name
-    tmp->location = type;             //adding data type
-    tmp->value = memory_value;        //adding memory value
-    tmp->next_symbol=NULL;            //initialize the pointer
+    strcpy(tmp->symbol_name,symbolN); /*adding name*/
+    tmp->location = type;             /*adding data type*/
+    tmp->value = memory_value;        /*adding memory value*/
+    tmp->next_symbol=NULL;            /*initialize the pointer*/
 
-    if(!symbol_table)       //if the table empty
+    if(!symbol_table)       /*if the table empty*/
         symbol_table = tmp; 
     
     else{
@@ -43,28 +42,28 @@ void add_symbol(char * symbolN,int memory_value ,enum line_type type){
 void add_extern(char *line){
     char *token,c;
     
-    //Extracting the symbol name
+    /*Extracting the symbol name*/
     token = strtok(line, " \t");
     token = strtok(NULL, " \t");
 
-    //Checking if the syntax is correct
+    /*Checking if the syntax is correct*/
     if(!token || !isalpha(token[0]))
     {
         error_flag=1;
-        fprintf(stdout,"assembler: error - symbol name is invaild  (line %d)\n",line_counter);
+        fprintf(stderr,"assembler: error - symbol name is invaild  (line %d)\n",line_counter);
         return;
     }
     
     for(int i=1; i<strlen(token);i++)
         if(!isalnum(token[i])){
             error_flag=1;
-            fprintf(stdout,"assembler: error - symbol name is invaild  (line %d)\n",line_counter);
+            fprintf(stderr,"assembler: error - symbol name is invaild  (line %d)\n",line_counter);
             return;
         }
     
-    //need to add function - that checks if a word is a saved word (for example: 'mov' , 'add' ....) !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  
+    /*need to add function - that checks if a word is a saved word (for example: 'mov' , 'add' ....) !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  */
     
-    //if all the test went good, adding the symbol to the symbol table with the value 0 
+    /*if all the test went good, adding the symbol to the symbol table with the value 0 */
     add_symbol(token,EXT_VALUE,external);   
      
 }
@@ -83,12 +82,12 @@ void update_data_symbol()
 
 int add_entry(char *symbol_name)
 {
-    int isFound = FALSE; //the argument we return eventually
-    symbol *curr = symbol_table; //represents the current node we are checking
+    int isFound = FALSE; /*the argument we return eventually*/
+    symbol *curr = symbol_table; /*represents the current node we are checking*/
 
-    while(curr) //going through the table
+    while(curr) /*going through the table*/
     {
-        if(!strcmp(curr->symbol_name, symbol_name)) //if the current node has same symbol name , quit the loop, update to entry and update the isFound var
+        if(!strcmp(curr->symbol_name, symbol_name)) /*if the current node has same symbol name , quit the loop, update to entry and update the isFound var*/
         {
             isFound = TRUE;
             curr->location = entry;
@@ -102,21 +101,21 @@ int add_entry(char *symbol_name)
 
 int add_symbol_value(char *token, int index)
 {
-    symbol *curr = symbol_table ; //represents current node
+    symbol *curr = symbol_table ; /*represents current node*/
     int isFound = FALSE;
 
-    while(curr) //looping through the table either until no symbol found or one is found
+    while(curr) /*looping through the table either until no symbol found or one is found*/
     {
         if( strcmp(curr->symbol_name,token) == 0)
         {
-            if(curr->location == external) //if its an external label. it has no address (address 0) and the E indicator is up
+            if(curr->location == external) /*if its an external label. it has no address (address 0) and the E indicator is up*/
             {
                 if(curr->value==0)
                 {
                     curr->value=index+LOAD_SPACE;
                 }
 
-                else //the usage of that is for the file print
+                else /*the usage of that is for the file print*/
                 {
                     add_symbol(token,index+LOAD_SPACE,external);
                 }
@@ -127,7 +126,7 @@ int add_symbol_value(char *token, int index)
             }
 
 
-            else //if its not an external label, than its a label defined in the file and value is E with the addition of the address it is defined
+            else /*if its not an external label, than its a label defined in the file and value is E with the addition of the address it is defined*/
             {
                 memory[index] = R ;
                 memory[index] |= ( (curr->value) << 3);
@@ -159,19 +158,19 @@ int get_symbol_amount(enum line_type type)
     
 }
 
-// I dont think this function is needed
+/* I dont think this function is needed*/
 
 void add_entry_symbol(char *current_line,int symbol_flag)
 {
     char *token;
-    token = strtok(current_line," \t"); //getting the first word of the line
+    token = strtok(current_line," \t"); /*getting the first word of the line*/
     if(symbol_flag)
     {
         fprintf(stderr,"Warning: defining a symbol in entry line\n");
         token = strtok(NULL," \t");
     }
 
-    token = strtok(NULL," \t"); //getting the symbol name
+    token = strtok(NULL," \t"); /*getting the symbol name*/
 
     if(isSavedPhrase(token))
     {

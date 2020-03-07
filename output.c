@@ -27,7 +27,7 @@ void make_object_file(char *filename)
 
     if( !IC && !DC )
     {
-        fprintf(stderr,"Assembly: no memory to print. object file not created.\n");
+        fprintf(stderr,"Assembler: no memory to print. object file not created.\n");
         free(obj_file);
         return;
     }
@@ -36,14 +36,14 @@ void make_object_file(char *filename)
     
     if(!objfp)
     {
-        fprintf(stderr,"assembly: an error accord when tried to open file %s. file not created\n",obj_file);
+        fprintf(stderr,"Assembler: an error accord when tried to open file %s. file not created\n",obj_file);
         free(obj_file);
         return;
     }
 
-    fprintf(objfp,"\n\t%d %d\n",IC,DC); // The first line of the file - the values of IC & DC
+    fprintf(objfp,"\n\t%d %d\n",IC,DC); /*The first line of the file - the values of IC & DC*/
     
-    while(temp_IC < (IC+DC) ) //printing all the data
+    while(temp_IC < (IC+DC) ) /*printing all the data*/
     {
         fprintf(objfp,"%04d %05o\n",temp_IC+LOAD_SPACE,memory[temp_IC]);
         temp_IC++;
@@ -51,8 +51,6 @@ void make_object_file(char *filename)
 
     fclose(objfp);
     free(obj_file);
-
-    fprintf(stderr,"OBJ FILE CREATED SUCCESSESFULLY !\n");
 
     return;
 }
@@ -67,7 +65,6 @@ void make_entry_file(char *filename)
     strcat(ent_file,ENTRY_POSTFIX);
 
     ent_count = get_symbol_amount(entry);
-    printf("output - ent amout is %d \n",ent_count);
 
     if(ent_count==0)
         return;
@@ -75,7 +72,7 @@ void make_entry_file(char *filename)
     entfp = fopen(ent_file,"w");
     if(!entfp)
     {
-        fprintf(stderr,"assembly: an error accord when tried to open file %s. file not created\n",ent_file);
+        fprintf(stderr,"Assembler: an error accord when tried to open file %s. file not created\n",ent_file);
         free(ent_file);
         return;
     }
@@ -98,7 +95,6 @@ void make_extern_file(char *filename)
     strcat(ext_file,EXTERN_POSTFIX);
 
     ext_count = get_symbol_amount(external);
-    printf("output - ext amout is %d \n",ext_count);
 
 
     if(ext_count==0)
@@ -108,7 +104,7 @@ void make_extern_file(char *filename)
     
     if(!extfp)
     {
-        fprintf(stderr,"assembly: an error accord when tried to open file %s. file not created\n",ext_file);
+        fprintf(stderr,"Assembler: an error accord when tried to open file %s. file not created\n",ext_file);
         free(ext_file);
         return;
     }

@@ -1,6 +1,8 @@
 .entry LIST
 .extern fn1
-MAIN:   add r3,LIST
+    ;start of the program
+                ;another line of test
+MAIN:   add r0,LIST
         jsr fn1
 LOOP:   prn #48
         lea     STR,r6
@@ -19,4 +21,6 @@ STR:    .string "abcd"
 LIST:   .data   6,-9
         .data -100
 K:      .data 31
+;unimportant comment
 .extern L3
+;test line at the END

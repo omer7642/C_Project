@@ -10,7 +10,7 @@
 
 extern unsigned char error_flag;
 
-typedef unsigned short int word; //memory cell in the computer
+typedef unsigned short int word; /*memory cell in the computer*/
 
 void first_pass(FILE *, char *);
 void second_pass(FILE *,char *);

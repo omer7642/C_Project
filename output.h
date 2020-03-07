@@ -10,10 +10,10 @@
 #define EXTRA_SPACE 5
 #define LOAD_SPACE 100
 
-typedef unsigned short int word; //memory cell in the computer
+typedef unsigned short int word; /*memory cell in the computer*/
 #ifndef ENUM
 #define ENUM
-enum line_type{code,data,string,entry,external}; //locations of symbols
+enum line_type{code,data,string,entry,external}; /*locations of symbols*/
 #endif
 
 extern short IC,DC;
