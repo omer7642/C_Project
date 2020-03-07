@@ -54,3 +54,5 @@ void update_data_symbol();
 
 extern word *memory;
 extern word *data_memory;
+extern unsigned char error_flag,second_pass_flag;
+

@@ -9,7 +9,7 @@
 #define EMPTY_LINE 2
 #define MAX_LINE 81
 
-extern unsigned char error_flag;
+extern unsigned char error_flag,second_pass_flag;
 extern int line_counter;
 
 #define NOT_OK_CHAR(p)  ( !p || *p =='\n'|| !(*p) )

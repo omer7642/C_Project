@@ -3,7 +3,7 @@
 short IC;
 short DC;
 int line_counter;
-unsigned char error_flag;
+unsigned char error_flag,second_pass_flag;
 
 void first_pass(FILE *fp, char *file_name)
 {
@@ -19,12 +19,12 @@ void first_pass(FILE *fp, char *file_name)
     line_counter=0; 
 
 
-    while( (line_flag = get_line(fp,current_line))!= EOF){
-        
+    while( (line_flag = get_line(fp,current_line))!= EOF)
+    {    
         line_counter++;
         if(line_flag == EMPTY_LINE)
             continue;
-        printf("%s\n", current_line);
+        
         current_type = check_type(current_line);   /*checking the type of the current line : 0-code,1-data,2-string,3-entry,4-extern*/
         if(current_type)
         { 
@@ -98,6 +98,7 @@ int second_pass(FILE *fp, char *file_name)
 
     EXIT_IF_RUNOUT_MEMORY
     rewind(fp); /*returning the file pointer to the beggining of the file*/
+    second_pass_flag = 1;
     
     while(IC_temp < IC)
     {

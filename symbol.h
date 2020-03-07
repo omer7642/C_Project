@@ -12,10 +12,11 @@
 #define R 2
 #define A 4
 #define LOAD_SPACE 100
+#define MAX_LINE 81
 /*-------------VARIABLES-----------------------*/
 extern word *memory;
 extern int line_counter;
-extern unsigned char error_flag;
+extern unsigned char error_flag,second_pass_flag;
 extern short IC;
 /*-------------ENUMS-----------------------*/
 

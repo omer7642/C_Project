@@ -6,8 +6,9 @@ char get_line(FILE *fp, char *current_line)
 	char isDeclaration = FALSE; /*a flag that will eventually say is the line has a symbol declared in it*/
 	char isEmpty = TRUE; /*if the line isn't empty, this flag will change*/
 	int writeIndex = 0; /*the index which writes of the line inside current_line*/
-	while (( (c = fgetc(fp)) != '\n')  && (c != EOF))/*we stop receiving input either at the end of a
-																		  non empty line, or at the end of the file*/
+
+
+	while (( (c = fgetc(fp)) != '\n')  && (c != EOF))/*we stop receiving input either at the end of a  non empty line, or at the end of the file*/											 
 	{
 		if (isspace(c)) /*if a whitespace, see if a whitespace is neede to be added artificially and reset the loop*/
 		{
@@ -17,13 +18,10 @@ char get_line(FILE *fp, char *current_line)
 
 		else if (c == ';') /*if its a comment line, count it and skip to the end of it*/
         {
-            line_counter++;
-			while (  ((c = fgetc(fp)) != '\n') || c == EOF); /*go through the line*/
+			while (  ((c = fgetc(fp)) != '\n') || c == EOF) /*go through the line*/
                 if(c == EOF) /*if the comment line is at the end of the file*/
-                    {
-                        fseek(fp, -1 * sizeof(char), SEEK_END);
-                        return EOF;
-                    }
+                    return EOF;
+            return EMPTY_LINE;
         }
 		else /*if not a space or a comment line, add it to the line*/
 		{
@@ -128,11 +126,7 @@ int get_command(char *current_line,unsigned char line_flag)
     else if(!strcmp(command, "stop"))
         return stop;
     else /*if no opcode found, throw an error*/
-    {
-        error_flag = TRUE;
-        fprintf(stderr, "Assembler: Unknown opcode entered on line %d\n", line_counter);
         return ERROR_SIGN;
-    }
 }
 
 char *get_symbol(char *current_line,char *symbol_name)
@@ -144,7 +138,6 @@ char *get_symbol(char *current_line,char *symbol_name)
     {
                 error_flag = TRUE;
                 symbol_name = "\n\0";
-                fprintf(stderr, "Assembler: invalid symbol name on line %d\n", line_counter);
                 return NULL;
     }
 
@@ -153,7 +146,6 @@ char *get_symbol(char *current_line,char *symbol_name)
         {
                 error_flag = TRUE;
                 symbol_name = "\n\0";
-                fprintf(stderr, "Assembler: invalid symbol name on line %d\n", line_counter);
                 return NULL;
         }
         symbol_name[j++] = current_line[i++];
@@ -167,7 +159,7 @@ char *get_symbol(char *current_line,char *symbol_name)
     if(isSavedPhrase(symbol_name))
     {
         error_flag = TRUE;
-        fprintf(stderr, "Assembler: declared a symbol that's a reserved phrase in line %d", line_counter);
+        fprintf(stderr, "Assembler: declared a symbol that's a reserved phrase (line %d)\n", line_counter);
         return NULL;
     }
 
@@ -236,7 +228,7 @@ int get_address_type(char * operand)
 {
     enum address_type curr_type; /*we return it eventually, if all is well*/
     int i=0; /*running index*/
-    
+
     if(operand[i] == '#') /*if immediate addressing*/
     {
         i++;
@@ -248,7 +240,8 @@ int get_address_type(char * operand)
             if(operand[i] < '0' || operand[i] > '9') /*if not a number in decimal base, its an error and we throw it out with error flag*/
             {
                 error_flag = TRUE;
-                fprintf(stderr, "Assembler: address type did not match operand type in line %d\n", line_counter);
+                if(!second_pass_flag)
+                    fprintf(stderr, "Assembler: invalid Number (line %d)\n", line_counter);
                 return ERROR_SIGN;
             }
             i++;
@@ -268,7 +261,8 @@ int get_address_type(char * operand)
         else
         {
             error_flag = TRUE;
-            fprintf(stderr, "Assembler: invalid register name for current addressing type, in line %d\n", line_counter);
+            if(!second_pass_flag)
+                fprintf(stderr, "Assembler: invalid register name (line %d)\n", line_counter);
             return ERROR_SIGN;
         }
     }
@@ -283,7 +277,8 @@ int get_address_type(char * operand)
         else
         {
             error_flag = TRUE;
-            fprintf(stderr, "Assembler: invalid register name for current addressing type, in line %d\n", line_counter);
+            if(!second_pass_flag)
+                fprintf(stderr, "Assembler: invalid register name (line %d)\n", line_counter);
             return ERROR_SIGN;
         }
         

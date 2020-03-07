@@ -57,7 +57,7 @@ void code_data(char *line,enum line_type type,int symbol_flag)
         
         token = strtok(NULL,"\0");
         length = strlen(token);
-        
+
         if(!token){ /*in case this no parameters.*/
             error_flag=1;
             fprintf(stderr,"Assembler: error - Missing Parametres in '.data' (line %d)\n",line_counter);
@@ -65,9 +65,15 @@ void code_data(char *line,enum line_type type,int symbol_flag)
         }
 
         i=0;
-        for(i=0;i<length;i++) /*scanning the line and each comma present a number (Exepct the last number)*/
+        for(i=0;i<length;i++)
+        { /*scanning the line and each comma present a number (Exepct the last number)*/
+            if(i!=length-1)
+                if(token[i]==' ' && isdigit(token[i+1]))
+                    count++;
+                    
             if(token[i] == ',')
                 count++;
+        }
         count++;/*Increasing for the last number.*/
 
     
@@ -109,10 +115,18 @@ void code_data(char *line,enum line_type type,int symbol_flag)
                 i++;
             
             if(token[i]!=',')
-                if(L!=count-1){
+                if(L!=count-1)
+                {  
                     error_flag=1;
                     L--; /*the previous Increasing was for nothing (6 lines Above)*/
-                    fprintf(stderr,"Assembler: error - Missing comma (line %d)\n",line_counter);
+                    
+                    while(isspace(token[i]))
+                        i++;
+                    if(isdigit(token[i]))
+                        fprintf(stderr,"Assembler: error - Missing comma (line %d)\n",line_counter);
+                    else
+                        fprintf(stderr,"Assembler: error - Invaild char (line %d)\n",line_counter);
+
                     return;
                 }   
             i++;
@@ -183,7 +197,6 @@ void code_instraction(char *line,int command_ind,int symbol_flag)
                         if(src_address == ERROR)
                         {
                             error_flag =1;
-                            fprintf(stderr,"Assembler: Invaild address method (line %d)\n",line_counter);
                             return;
                         }
                         memory[IC] |= mask<<(SOURCE_SHIFT+src_address) ; /*decoding the source address of the first word*/
@@ -242,7 +255,6 @@ void code_instraction(char *line,int command_ind,int symbol_flag)
                     if(des_address == ERROR)
                         {
                             error_flag =1;
-                            fprintf(stderr,"Assembler: Invaild address method (line %d)\n",line_counter);
                             return;
                         }
                     memory[IC] |= mask<<(TARGET_SHIFT+des_address) ; /*decoding the target address of the first word*/
@@ -347,7 +359,6 @@ void code_instraction(char *line,int command_ind,int symbol_flag)
                     if(des_address == ERROR)
                         {
                             error_flag =1;
-                            fprintf(stderr,"Assembler: Invaild address method (line %d)\n",line_counter);
                             return;
                         }
                     memory[IC] |= mask<<(TARGET_SHIFT+des_address) ; /*decoding the target address of the first word*/

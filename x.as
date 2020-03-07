@@ -1,7 +1,7 @@
 .entry LIST
 .extern fn1
-    ;start of the program
-                ;another line of test
+ ;start of the program
+        ;another line of test
 MAIN:   add r0,LIST
         jsr fn1
 LOOP:   prn #48
@@ -18,7 +18,7 @@ LOOP:   prn #48
         jmp LOOP
 END:    stop
 STR:    .string "abcd"
-LIST:   .data   6,-9
+LIST:   .data   6,9
         .data -100
 K:      .data 31
 ;unimportant comment

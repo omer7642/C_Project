@@ -41,9 +41,12 @@ void add_symbol(char * symbolN,int memory_value ,enum line_type type){
 
 void add_extern(char *line){
     char *token,c;
+    char *temp_line = (char *)malloc(MAX_LINE);
+
+    strcpy(temp_line,line);
     
     /*Extracting the symbol name*/
-    token = strtok(line, " \t");
+    token = strtok(temp_line, " \t");
     token = strtok(NULL, " \t");
 
     /*Checking if the syntax is correct*/
@@ -64,7 +67,9 @@ void add_extern(char *line){
     /*need to add function - that checks if a word is a saved word (for example: 'mov' , 'add' ....) !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  */
     
     /*if all the test went good, adding the symbol to the symbol table with the value 0 */
-    add_symbol(token,EXT_VALUE,external);   
+    add_symbol(token,EXT_VALUE,external); 
+
+    free(temp_line);
      
 }
 
