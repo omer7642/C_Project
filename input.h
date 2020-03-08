@@ -1,20 +1,4 @@
-#include "passes.h"
-
-#define TRUE 1
-#define FALSE 0
-#define MAX_VALUE 2048
-#define BYTE 8
-#define MAX_COMMAND_LENGTH 5
-#define ERROR_SIGN -1
-#define EMPTY_LINE 2
-#define MAX_LINE 81
-
-extern unsigned char error_flag,second_pass_flag;
-extern int line_counter;
-
-#define NOT_OK_CHAR(p)  ( !p || *p =='\n'|| !(*p) )
-
-typedef unsigned char BOOL; 
+#include "general.h"
 
 char get_line(FILE *,char *);       /*gets the line from the users and checks for general errors. returns -1 if EOF, 0 if line without a symbol declaration, or 1 with symbol declaration*/
 enum line_type check_type(char *);  /*returns the type of the line , code, data, string, extern or entry*/

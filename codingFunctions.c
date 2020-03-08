@@ -189,7 +189,7 @@ void code_instraction(char *line,int command_ind,int symbol_flag)
                     if (!token) /*in-case line with no opernad*/
                     {   
                         error_flag=1;
-                        fprintf(stderr, "Assembler: Instruction %s Have No Operand (line %d)\n",opcodes[command_ind],line_counter);
+                        fprintf(stderr, "Assembler: Instruction Have No Operand (line %d)\n",line_counter);
                         return;
                     }
 
@@ -203,7 +203,7 @@ void code_instraction(char *line,int command_ind,int symbol_flag)
                         if(command_ind == lea && src_address != direct)
                         {
                             error_flag=1;
-                            fprintf(stderr, "Assembler: Instruction %s can't accept this address type (line %d)\n",opcodes[command_ind],line_counter);
+                            fprintf(stderr, "Assembler: Instruction can't accept this address type (line %d)\n",line_counter);
                             return;
                         }
                         
@@ -264,7 +264,7 @@ void code_instraction(char *line,int command_ind,int symbol_flag)
                                 if(command_ind != cmp) /*only the compare method can accept this address type in target*/
                                 {
                                     error_flag=1;
-                                    fprintf(stderr, "Assembler: Instruction %s don't accept immidate address for target operand (line %d)\n",opcodes[command_ind],line_counter);
+                                    fprintf(stderr, "Assembler: Instruction don't accept immidate address for target operand (line %d)\n",line_counter);
                                     return;   
                                 }
                                 while(token){  /*skipping spaces and searching for the char '#'*/
@@ -351,7 +351,7 @@ void code_instraction(char *line,int command_ind,int symbol_flag)
                     if (!token) /*in-case line with no opernad*/
                     {   
                         error_flag=1;
-                        fprintf(stderr, "Assembler: Instruction %s Have No Operand (line %d)\n",opcodes[command_ind],line_counter);
+                        fprintf(stderr, "Assembler: Instruction Have No Operand (line %d)\n",line_counter);
                         return;
                     }
 

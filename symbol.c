@@ -203,3 +203,22 @@ void print_symbols(FILE *fp, enum line_type type)
     }
     return;
 }
+
+void free_symbol_table(){
+    symbol *p,*q,*t;
+
+    p=symbol_table;
+    q=NULL;
+
+    while(p)
+    {
+        q=p;
+        p=p->next_symbol;
+        free(q);
+    }
+    
+    free(symbol_table);
+    symbol_table = NULL;
+
+    return;
+}

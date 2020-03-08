@@ -39,12 +39,13 @@ int main(int argc, char **argv)
 
     
         if(!error_flag)
-            make_output(argv[i]);
-
-        i++;
+            make_output(argv[i++]);
     
-
+        fclose(current_fp); /*closing the current file */
+        free_symbol_table(); /*free the symbol table */
+        free(memory); /* free the memory*/
    }
+    
     
 
     return 0;
