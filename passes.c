@@ -12,6 +12,7 @@ void first_pass(FILE *fp, char *file_name)
     enum line_type current_type; /*type of the line (instruction,data,string,entry,external)*/
     char *current_line = (char *)malloc(MAX_LINE); /*holds the current command line*/
     char *symbol_name = (char *)malloc(SYMBOL_MAX_LENGTH); /*holds the current symbol name (if there is one)*/
+    int i,j;
     
     
     IC=0;
@@ -77,7 +78,7 @@ void first_pass(FILE *fp, char *file_name)
         free(current_line);
         free(symbol_name);
     
-    for(int i=IC ,j=0 ; j<DC ; j++,i++) /*merging the two data structures;*/
+    for( i=IC ,j=0 ; j<DC ; j++,i++) /*merging the two data structures;*/
         memory[i] = data_memory[j];
     update_data_symbol();/*adding to all data symbol the value of IC+100 because the merging of the data structures*/
 
@@ -88,7 +89,7 @@ void first_pass(FILE *fp, char *file_name)
 
 int second_pass(FILE *fp, char *file_name)
 {
-    int IC_temp=0 ,i=0,j=0,line_cnt_tmp=0, L;
+    int IC_temp=0 ,line_cnt_tmp=0, L; 
     char *token,line_flag,command;
     enum line_type current_type; /*type of the line (instruction,data,string,entry,external)*/
     enum address_type address,des_address,src_address;

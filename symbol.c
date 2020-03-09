@@ -4,7 +4,6 @@ symbol *symbol_table = NULL;
 
 void add_symbol(char * symbolN,int memory_value ,enum line_type type){
     symbol *tmp,*p;
-    unsigned flag = 0;
 
     /*checking if the symbol exist*/
     tmp = symbol_table;
@@ -40,8 +39,9 @@ void add_symbol(char * symbolN,int memory_value ,enum line_type type){
 }
 
 void add_extern(char *line){
-    char *token,c;
+    char *token;
     char *temp_line = (char *)malloc(MAX_LINE);
+    int i;
 
     strcpy(temp_line,line);
     
@@ -57,7 +57,7 @@ void add_extern(char *line){
         return;
     }
     
-    for(int i=1; i<strlen(token);i++)
+    for( i=1; i<strlen(token);i++)
         if(!isalnum(token[i])){
             error_flag=1;
             fprintf(stderr,"assembler: error - symbol name is invaild  (line %d)\n",line_counter);
@@ -205,10 +205,9 @@ void print_symbols(FILE *fp, enum line_type type)
 }
 
 void free_symbol_table(){
-    symbol *p,*q,*t;
+    symbol *p,*q;
 
     p=symbol_table;
-    q=NULL;
 
     while(p)
     {
@@ -216,9 +215,11 @@ void free_symbol_table(){
         p=p->next_symbol;
         free(q);
     }
+
+
     
-    free(symbol_table);
     symbol_table = NULL;
 
     return;
 }
+

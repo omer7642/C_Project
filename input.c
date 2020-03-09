@@ -44,9 +44,10 @@ char get_line(FILE *fp, char *current_line)
 enum line_type check_type(char *current_line)
 {
     char *temp = (char *)malloc(sizeof(char) * strlen(current_line)); /*instead of changing the original line, do all changes on a temp string*/
+    char *token;
     
     strcpy(temp, current_line); /*copy current_line into temp to avoid changing current_line*/
-    char *token = strtok(temp, " "); /*get first token*/
+    token = strtok(temp, " "); /*get first token*/
     
    
     while(token != NULL)
@@ -74,8 +75,7 @@ int get_command(char *current_line,unsigned char line_flag)
 {
     char *command = (char *)malloc(sizeof(char) * (MAX_COMMAND_LENGTH + 1)); 
     char *temp_line = (char *)malloc(MAX_LINE);
-    char *token;
-    int i=0; /*the index we use to access current_line*/
+    char *token; 
     
     strcpy(temp_line,current_line);
 
@@ -132,7 +132,6 @@ int get_command(char *current_line,unsigned char line_flag)
 char *get_symbol(char *current_line,char *symbol_name)
 {
     int i = 0,j=0; /*index of iteration*/
-    char c;
     
     if(!isalpha(current_line[i]))
     {
@@ -306,3 +305,4 @@ int complement_2 (int num)
     
     return num;
 }
+

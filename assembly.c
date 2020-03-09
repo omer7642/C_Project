@@ -15,7 +15,7 @@ int main(int argc, char **argv)
        exit(0);
    }
 
-   while (--argc)
+   while (--argc) 
    {
         char *file_name= (char *)malloc(strlen(argv[i])+strlen(ASSEMBLY_POSTFIX)+10); /* memory allocation for the file name and the file postfix +10 for the ending char and extra space*/
         strcpy(file_name,argv[i]); /*copying the file name to the allocated string*/

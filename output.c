@@ -16,7 +16,7 @@ void make_output(char *file_name)
 
 void make_object_file(char *filename)
 {
-    short temp_DC = 0, temp_IC = 0; 
+    short temp_IC = 0; 
     FILE *objfp;
     char *obj_file = (char *) malloc ( strlen(filename) + strlen(OBJECT_POSTFIX) + EXTRA_SPACE );
     

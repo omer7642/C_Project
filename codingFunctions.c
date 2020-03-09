@@ -10,7 +10,7 @@
 
 void code_data(char *line,enum line_type type,int symbol_flag)
 {
-    char *token,c,str_num[MAX_NUM_LENGTH];
+    char *token,str_num[MAX_NUM_LENGTH];
     int count=0,j=0,i=0,length,L,num;
     char *temp_line = (char *)malloc(MAX_LINE);
     
@@ -143,7 +143,7 @@ void code_data(char *line,enum line_type type,int symbol_flag)
             
              
             data_memory[DC+L] = num;
-            data_memory[DC+L] &=  ~( 1<<(sizeof(short) * BYTE)-1);
+            data_memory[DC+L] &=  ~( 1<<( (sizeof(short) * BYTE)-1 ) ); /* Turn off the last bit - not in use in the computers memory*/
            
         
         }
@@ -158,9 +158,9 @@ void code_data(char *line,enum line_type type,int symbol_flag)
 
 void code_instraction(char *line,int command_ind,int symbol_flag)
 {
-    char *token, src_str[OPERAND_MAX_LENGTH],des_str[OPERAND_MAX_LENGTH];
+    char *token;
     char *temp_line = (char *)malloc(MAX_LINE);
-    int number,L=0,i=0;
+    int number,L=0;
     enum address_type src_address, des_address;
     unsigned mask = 1;
 
@@ -221,7 +221,7 @@ void code_instraction(char *line,int command_ind,int symbol_flag)
                                 
                                 memory[IC+1] = A;
                                 memory[IC+1] |= (number << IMMIDIATE_SHIFT);
-                                memory[IC+1] &=  ~( 1<<(sizeof(short) * BYTE)-1);
+                                memory[IC+1] &=   ~( 1<<( (sizeof(short) * BYTE)-1 ) ); /* Turn off the last bit - not in use in the computers memory*/
                                 break;
                     
                             case direct:
@@ -278,7 +278,7 @@ void code_instraction(char *line,int command_ind,int symbol_flag)
                                   
                                 memory[IC+2] = A;
                                 memory[IC+2] |= (number << IMMIDIATE_SHIFT); /*need to be in bits 3-14*/
-                                memory[IC+2] &=  ~( 1<<(sizeof(short) * BYTE)-1);
+                                memory[IC+2] &=   ~( 1<<( (sizeof(short) * BYTE)-1 ) ); /* Turn off the last bit - not in use in the computers memory*/
                                 break;
                     
                             case direct:
@@ -352,7 +352,7 @@ void code_instraction(char *line,int command_ind,int symbol_flag)
                     {   
                         error_flag=1;
                         fprintf(stderr, "Assembler: Instruction Have No Operand (line %d)\n",line_counter);
-                        return;
+                        return; 
                     }
 
                     des_address = get_address_type(token);
@@ -380,7 +380,7 @@ void code_instraction(char *line,int command_ind,int symbol_flag)
                             number = atoi(token+1);
                             memory[IC+1] = A;
                             memory[IC+1] |= (number << IMMIDIATE_SHIFT); /*need to be in bits 3-14*/
-                            memory[IC+1] &=  ~( 1<<(sizeof(short) * BYTE)-1);
+                            memory[IC+1] &=   ~( 1<<( (sizeof(short) * BYTE)-1 ) ); /* Turn off the last bit - not in use in the computers memory*/
                             break;
 
                         
