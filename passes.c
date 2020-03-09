@@ -1,9 +1,10 @@
 #include "passes.h" 
 
-short IC;
-short DC;
-int line_counter;
-unsigned char error_flag,second_pass_flag;
+short IC;/*instruction counter, counts the number of instruction words in the program's memory*/
+short DC;/*data counter, counts the amount of words used for data in the program's memory*/
+int line_counter; /*tells which line our errors refers to in the assembly file*/
+unsigned char error_flag,second_pass_flag; /*if error flags is up. meaning assembly files has errors, no files will be created. second pass flag makes sure 
+                                            errors don't reappear in the second pass as well creating double-errors*/
 
 void first_pass(FILE *fp, char *file_name)
 {
@@ -14,16 +15,17 @@ void first_pass(FILE *fp, char *file_name)
     char *symbol_name = (char *)malloc(SYMBOL_MAX_LENGTH); /*holds the current symbol name (if there is one)*/
     int i,j;
     
-    
-    IC=0;
-    DC=0;
+    /*zero all counters before run*/
+
+    IC=0; 
+    DC=0; 
     line_counter=0; 
 
 
     while( (line_flag = get_line(fp,current_line))!= EOF)
     {    
         line_counter++;
-        if(line_flag == EMPTY_LINE)
+        if(line_flag == EMPTY_LINE) /*if emptry line, we just count it in line_counter and go to the next iteration*/
             continue;
         
         current_type = check_type(current_line);   /*checking the type of the current line : 0-code,1-data,2-string,3-entry,4-extern*/
@@ -33,7 +35,7 @@ void first_pass(FILE *fp, char *file_name)
                 get_symbol(current_line,symbol_name);
                 if(symbol_name == NULL || !(*symbol_name))
                 {
-                    error_flag = 1;
+                    error_flag = TRUE;
                     fprintf(stderr,"assembly: Invaild symbol name (line %d)\n",line_counter);
                 } 
                 add_symbol(symbol_name,DC,current_type);
@@ -63,13 +65,13 @@ void first_pass(FILE *fp, char *file_name)
                 get_symbol(current_line,symbol_name);
                 if(symbol_name == NULL || !(*symbol_name)) /*sign that the symbol name in invalid*/
                 {
-                    error_flag = 1;
+                    error_flag = TRUE;
                     fprintf(stderr,"assembly: Invaild symbol name (line %d)\n",line_counter);
                 } 
                 add_symbol(symbol_name,IC+LOAD_SPACE,code);
             }
             command = get_command(current_line,line_flag); /*if -1 error, else return the index of the command.*/
-            code_instraction(current_line,command,line_flag); /*getting the line, Instruction ,the command index, and line flag - If there is a symbol or not*/
+            code_instruction(current_line,command,line_flag); /*getting the line, Instruction ,the command index, and line flag - If there is a symbol or not*/
             
         }
    
@@ -107,7 +109,7 @@ int second_pass(FILE *fp, char *file_name)
 
         if( (line_flag = get_line(fp,current_line)) == EOF)
         {
-            error_flag =1;
+            error_flag =TRUE;
             fprintf(stderr,"assembly: returned EOF from the source file in the second pass \n");
             return 0;
         }
@@ -116,11 +118,13 @@ int second_pass(FILE *fp, char *file_name)
         current_type = check_type(current_line);   /*checking the type of the current line : 0-code,1-data,2-string,3-entry,4-extern*/
         strcpy(temp_line,current_line);
 
+        if (line_flag == EMPTY_LINE) /*of the line is empty, simply do nothing and continue to next line*/
+            continue;
 
-        if(current_type)
+        if(current_type) /*if a non-instruction line*/
         {
 
-            if (current_type == entry)
+            if (current_type == entry) /*if line is of type entry - meaning an entry symbol is defined there*/
             {
                 
                 token = strtok(temp_line," \t");
@@ -129,16 +133,16 @@ int second_pass(FILE *fp, char *file_name)
 
                 token = strtok(NULL," \t\n"); /*getting the name of the symbol;*/
 
-                if NOT_OK_CHAR(token)
+                if NOT_OK_CHAR(token) /*if symbol startswith a non-legit character*/
                 {
-                    error_flag = 1;
+                    error_flag = TRUE;
                     fprintf(stderr,"assembly: entry line without arguments (line %d) \n",line_cnt_tmp);
                     continue;
                 }
 
                 if (!add_entry(token)) /*if the symbol not exist in the symbol_table*/
                 {
-                    error_flag =1;
+                    error_flag = TRUE;
                     fprintf(stderr,"assembly: non existing symbol in entry line (line %d)\n",line_cnt_tmp);
                 }
 
@@ -149,7 +153,7 @@ int second_pass(FILE *fp, char *file_name)
 
         else /*instruction line*/
         {
-            command = get_command(current_line, line_flag);
+            command = get_command(current_line, line_flag); /*extract the opcode of the command*/
 
             if(command<0) /*undefined command line*/
                 continue; 
@@ -188,7 +192,7 @@ int second_pass(FILE *fp, char *file_name)
 
                 if(! add_symbol_value(token,IC_temp+1)) /*adding the symbol value to the memory, if the symbol don't exist, returns 0*/
                 {
-                    error_flag=1;
+                    error_flag=TRUE;
                     fprintf(stderr,"assembly: Using undefined symbol (line %d)\n",line_cnt_tmp);
                 }
 
@@ -219,7 +223,7 @@ int second_pass(FILE *fp, char *file_name)
 
                     if(! add_symbol_value(token,IC_temp+1)) /*adding the symbol value to the memory, if the symbol don't exist, returns 0*/
                     {
-                        error_flag=1;
+                        error_flag=TRUE;
                         fprintf(stderr,"assembly: Using undefined symbol (line %d)\n",line_cnt_tmp);
                     }
                 }
@@ -234,7 +238,7 @@ int second_pass(FILE *fp, char *file_name)
 
                 if( des_address==register_indirect || des_address==register_direct ){
                     if( src_address==register_indirect || src_address==register_direct )
-                        L--; /*the two operand using the same memory word*/
+                        L--; /*if both operands has registers we use same word to define them*/
                 }
                 
                 else if( des_address == direct)
@@ -244,7 +248,7 @@ int second_pass(FILE *fp, char *file_name)
 
                     if(! add_symbol_value(token,IC_temp+2)) /*adding the symbol value to the memory, if the symbol don't exist, returns 0*/
                     {
-                        error_flag=1;
+                        error_flag=TRUE;
                         fprintf(stderr,"assembly: Using undefined symbol (line %d)\n",line_cnt_tmp);
                     }
                 }

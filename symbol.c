@@ -13,7 +13,7 @@ void add_symbol(char * symbolN,int memory_value ,enum line_type type){
         {
             if(strcmp(tmp->symbol_name,symbolN)==0)/*in case the symbol is exiting*/
             { 
-                error_flag=1;
+                error_flag=TRUE;
                 fprintf(stderr,"symbol-table: error - trying to declare an exist symbol. (line %d) \n",line_counter);
                 return;
             }
@@ -52,15 +52,15 @@ void add_extern(char *line){
     /*Checking if the syntax is correct*/
     if(!token || !isalpha(token[0]))
     {
-        error_flag=1;
-        fprintf(stderr,"assembler: error - symbol name is invaild  (line %d)\n",line_counter);
+        error_flag=TRUE;
+        fprintf(stderr,"Assembler: error - symbol name is invaild  (line %d)\n",line_counter);
         return;
     }
     
     for( i=1; i<strlen(token);i++)
         if(!isalnum(token[i])){
-            error_flag=1;
-            fprintf(stderr,"assembler: error - symbol name is invaild  (line %d)\n",line_counter);
+            error_flag=TRUE;
+            fprintf(stderr,"Assembler: error - symbol name is invaild  (line %d)\n",line_counter);
             return;
         }
     
@@ -111,7 +111,7 @@ int add_symbol_value(char *token, int index)
 
     while(curr) /*looping through the table either until no symbol found or one is found*/
     {
-        if( strcmp(curr->symbol_name,token) == 0)
+        if( strcmp(curr->symbol_name,token) == 0) /*if we found the symbol that we're looking for*/
         {
             if(curr->location == external) /*if its an external label. it has no address (address 0) and the E indicator is up*/
             {
@@ -131,7 +131,7 @@ int add_symbol_value(char *token, int index)
             }
 
 
-            else /*if its not an external label, than its a label defined in the file and value is E with the addition of the address it is defined*/
+            else /*if its not an external label, than its a label defined in the file and value is R with the addition of the address it is defined*/
             {
                 memory[index] = R ;
                 memory[index] |= ( (curr->value) << 3);
@@ -150,8 +150,8 @@ int add_symbol_value(char *token, int index)
 
 int get_symbol_amount(enum line_type type)
 {
-    symbol *p = symbol_table;
-    int count = 0;
+    symbol *p = symbol_table; /*the variable we use to iterate through the symbol table*/
+    int count = 0; /*the counter of the amount of times a certain type is defined*/
     while (p)
     {
         if(p->location == type)
@@ -162,8 +162,6 @@ int get_symbol_amount(enum line_type type)
     return count;        
     
 }
-
-/* I dont think this function is needed*/
 
 void add_entry_symbol(char *current_line,int symbol_flag)
 {
@@ -177,10 +175,10 @@ void add_entry_symbol(char *current_line,int symbol_flag)
 
     token = strtok(NULL," \t"); /*getting the symbol name*/
 
-    if(isSavedPhrase(token))
+    if(isSavedPhrase(token)) /*uf the symbol is a saved phrase*/
     {
-        error_flag = 1;
-        fprintf(stderr,"assembly: using a saved word for symbol name\n");
+        error_flag = TRUE;
+        fprintf(stderr,"Assembler: using a saved word for symbol name\n");
         return;
     }
 
@@ -192,7 +190,7 @@ void print_symbols(FILE *fp, enum line_type type)
 {
     symbol *ptr = symbol_table;
     
-    while(ptr)
+    while(ptr) /*iteration through the symbol table, and print to file it's name and value*/
     {
         if(ptr->location == type)
         {
@@ -209,7 +207,7 @@ void free_symbol_table(){
 
     p=symbol_table;
 
-    while(p)
+    while(p) /*iteration through the symbol table, with two nodes, while one advamces the prev one is being freed*/
     {
         q=p;
         p=p->next_symbol;
@@ -218,7 +216,7 @@ void free_symbol_table(){
 
 
     
-    symbol_table = NULL;
+    symbol_table = NULL; /*at the end symbol table gets a NULL value*/
 
     return;
 }

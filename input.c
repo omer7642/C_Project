@@ -85,8 +85,8 @@ int get_command(char *current_line,unsigned char line_flag)
 
     if NOT_OK_CHAR(token)
     {
-        error_flag=1;
-        fprintf(stderr,"Assembler: No opcode\n");
+        error_flag=TRUE;
+        fprintf(stderr,"Assembler: No opcode in line %d\n", line_counter);
         return ERROR_SIGN;
     }
     

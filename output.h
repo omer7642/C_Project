@@ -5,10 +5,10 @@
 #define EXTERN_POSTFIX ".ext"
 #define ENTRY_POSTFIX ".ent"
 
-void make_output(char *);
-void add_assembly_postfix(char *);
-void make_object_file(char *);
-void make_entry_file(char *);
-void make_extern_file(char *);
-int get_symbol_amount(enum line_type);
-void print_symbols(FILE *,enum line_type);
+void make_output(char *); /*if no errors this function create the .ob, .ent and .ext file with the current memory image */
+void add_assembly_postfix(char *);/*adds an .as postfix to a given filename*/
+void make_object_file(char *); /*this function makes an .ob file, with the right postfix, printing the memory image into the file*/
+void make_entry_file(char *); /*this function prints the enry symbols and their place in the memory into an .ent file*/
+void make_extern_file(char *); /*this function prints the extern symbols and their place in the memory into an .ext file*/
+int get_symbol_amount(enum line_type); /*prints the amount of symbols from a specific type, defined in symbols.c*/
+void print_symbols(FILE *,enum line_type); /*prints symbols of a specific type and their value into a file, defined in symbols.c*/

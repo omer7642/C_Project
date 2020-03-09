@@ -6,10 +6,10 @@ word *data_memory;
 int main(int argc, char **argv)
 {
    
-   FILE *current_fp;   
-   int i = 1;
+   FILE *current_fp; /*the current file we open and work on, without the .as postfix*/
+   int i = 1; /*index of iteration of the command line arguments*/
 
-   if(argc == 1)
+   if(argc == 1) /*if no filename was entered in the command line*/
    {
        fprintf(stderr,"Assembler: please enter source code file name\n");
        exit(0);

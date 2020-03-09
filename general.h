@@ -64,8 +64,10 @@ typedef struct sym{
 
 typedef unsigned char BOOL; 
 
-extern short DC,IC;
-extern int line_counter;
-extern unsigned char error_flag,second_pass_flag;
-extern word *memory;
-extern word *data_memory;
+extern short DC,IC; /*data counter and instruction counter of the program*/
+extern int line_counter; /*gives an indication of the current line we're in right now for error message usage*/
+extern unsigned char error_flag,second_pass_flag; /*two important flags, error flag is a variable that's true if error occured in the program, and hence no 
+                                                    output files will be created, and second pass flag says that if we had errors in first pass, we won't see
+                                                    same errors on the second pass to avoid complication*/
+extern word *memory; /*the memory image of the file, being print at the end of the file*/
+extern word *data_memory; /*the data image of the file, all data is decoded into this memory, and being print at the end*/
