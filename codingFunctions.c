@@ -7,7 +7,6 @@
     the function decoding the code line to binary and implementing the data in the data_emory.
     The function Increasing the Data Counter by need, and printing an error to the standart output in error situations.
 */
-
 void code_data(char *line,enum line_type type,int symbol_flag)
 {
     char *token,str_num[MAX_NUM_LENGTH]; /*the data tokens we get from the line*/
@@ -142,6 +141,10 @@ void code_data(char *line,enum line_type type,int symbol_flag)
             {
                 num = atoi(str_num);
             }
+
+             /*In case the number is too big/small to be represnt in 15 bits */
+            if( num>MAX_VALUE_DATA || num<MIN_VALUE_DATA )
+                fprintf(stderr,"Warning: Data loss - number %d is out of limit. (line %d) \n",num,line_counter);
             
              
             data_memory[DC+L] = num; /*add the converted number to data_memory*/
@@ -219,8 +222,13 @@ void code_instruction(char *line,int command_ind,int symbol_flag)
                                     token++;
                                 }
                                 number = atoi(token+1);
+
+                                /*In case the number is too big/small to be represnt in 11 bits */
+                                if( number>MAX_VALUE_IMMIDIATE || number<MIN_VALUE_IMMIDIATE )
+                                    fprintf(stderr,"Warning: Data loss - number %d is out of limit. (line %d) \n",number,line_counter);
+
                                 if(number<0)
-                                  number = complement_2(number); /*if the number is minus need to convert it to 14-3 bits*/
+                                  number = complement_2(number); /*if the number is negative need to convert it to 14-3 bits*/
                                 
                                 memory[IC+1] = A;
                                 memory[IC+1] |= (number << IMMIDIATE_SHIFT);
@@ -276,6 +284,11 @@ void code_instruction(char *line,int command_ind,int symbol_flag)
                                     token++;
                                 }
                                 number = atoi(token+1);
+
+                                /*In case the number is too big/small to be represnt in 11 bits */
+                                if( number>MAX_VALUE_IMMIDIATE || number<MIN_VALUE_IMMIDIATE )
+                                    fprintf(stderr,"Warning: Data loss - number %d is out of limit. (line %d) \n",number,line_counter);
+
                                 if(number<0)
                                   number = complement_2(number); /*if the number is minus need to convert it to 14-3 bits*/
                                   
@@ -381,6 +394,14 @@ void code_instruction(char *line,int command_ind,int symbol_flag)
                                     token++;
                                 }
                             number = atoi(token+1);
+                            
+                            /*In case the number is too big/small to be represnt in 11 bits */
+                            if( number>MAX_VALUE_IMMIDIATE || number<MIN_VALUE_IMMIDIATE )
+                                fprintf(stderr,"Warning: Data loss - number %d is out of limit. (line %d) \n",number,line_counter);
+
+                            if(number<0)
+                                number = complement_2(number); /*if the number is minus need to convert it to 14-3 bits*/
+
                             memory[IC+1] = A;
                             memory[IC+1] |= (number << IMMIDIATE_SHIFT); /*need to be in bits 3-14*/
                             memory[IC+1] &=   ~( 1<<( (sizeof(short) * BYTE)-1 ) ); /* Turn off the last bit - not in use in the computers memory*/

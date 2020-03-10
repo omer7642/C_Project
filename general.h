@@ -33,6 +33,10 @@
 #define EXT_VALUE 0
 #define SYMBOL_MAX_LENGTH 32
 #define EMPTY_LINE 2
+#define MAX_VALUE_IMMIDIATE 2047
+#define MIN_VALUE_IMMIDIATE -2048
+#define MAX_VALUE_DATA 16383
+#define MIN_VALUE_DATA -16384
 
 #define CHECK_MEMORY (DC+IC >= MAX_WORDS) /*Checking if the total Words in the memory is too much*/
 #define EXIT_IF_RUNOUT_MEMORY {\
