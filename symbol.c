@@ -1,7 +1,10 @@
 #include "symbol.h" 
 
-symbol *symbol_table = NULL;
+symbol *symbol_table = NULL; /*the symbol table*/
 
+/*this function receives a symbol name, value in memory and type. it iterates through symbol table to check that the symbol isn't defined.
+if its not declared its already an ok symbol (legality of symbol syntax is defined in other functions) then it adds a new node to symbol table
+and puts the name, value and type inside.*/
 void add_symbol(char * symbolN,int memory_value ,enum line_type type){
     symbol *tmp,*p;
 
@@ -38,10 +41,12 @@ void add_symbol(char * symbolN,int memory_value ,enum line_type type){
 
 }
 
+/*this function receives a line and extracts the symbol from it using a temp line in order not to alter the original line. 
+if its a is a valid line then it adds it as external symbol */
 void add_extern(char *line){
-    char *token;
-    char *temp_line = (char *)malloc(MAX_LINE);
-    int i;
+    char *token; /*symbol name*/
+    char *temp_line = (char *)malloc(MAX_LINE); /*we use it not to alter the line itself for further work on the line*/
+    int i; /*iteration index*/
 
     strcpy(temp_line,line);
     
@@ -72,7 +77,7 @@ void add_extern(char *line){
     free(temp_line);
      
 }
-
+/*this function goes throught all the symbol table, and check. if its either a data or string symbol, it updates its value and adds IC + 100*/
 void update_data_symbol()
 {
     symbol *curr = symbol_table;
@@ -84,7 +89,7 @@ void update_data_symbol()
     }
 }
 
-
+/*this function receives a symbol name,  checks if it exists and changes it to entry. */
 int add_entry(char *symbol_name)
 {
     int isFound = FALSE; /*the argument we return eventually*/
@@ -103,7 +108,8 @@ int add_entry(char *symbol_name)
 
     return isFound;
 }
-
+/*this function receives a symbol name - as token , and index in the memory and it adds it to the memory according to its value. if it an external value is 0
+else it has a value and R bit is on. */
 int add_symbol_value(char *token, int index)
 {
     symbol *curr = symbol_table ; /*represents current node*/
@@ -111,7 +117,7 @@ int add_symbol_value(char *token, int index)
 
     while(curr) /*looping through the table either until no symbol found or one is found*/
     {
-        if( strcmp(curr->symbol_name,token) == 0) /*if we found the symbol that we're looking for*/
+        if( !strcmp(curr->symbol_name,token)) /*if we found the symbol that we're looking for*/
         {
             if(curr->location == external) /*if its an external label. it has no address (address 0) and the E indicator is up*/
             {
@@ -147,7 +153,7 @@ int add_symbol_value(char *token, int index)
     return isFound;
 }
 
-
+/*this function receives a type, iterates throught the symbol table and says how many symbols are of the given type*/
 int get_symbol_amount(enum line_type type)
 {
     symbol *p = symbol_table; /*the variable we use to iterate through the symbol table*/
@@ -162,7 +168,8 @@ int get_symbol_amount(enum line_type type)
     return count;        
     
 }
-
+/*we enter this function for entry lines only. it receives a line and a symbol flag. it gets the symbol name, if a symbol is defined in entry line it throws
+an error, then it gets the symbol itself, sees it is a saved phrase, if not then it adds to the symbol line with value 0 (entry symbol) */
 void add_entry_symbol(char *current_line,int symbol_flag)
 {
     char *token;
@@ -186,6 +193,7 @@ void add_entry_symbol(char *current_line,int symbol_flag)
 
 }
 
+/*this function receives a file pointer, and a type. it prints to the file all symbols vales that match the type we enteres, and their names*/
 void print_symbols(FILE *fp, enum line_type type)
 {
     symbol *ptr = symbol_table;
@@ -201,6 +209,7 @@ void print_symbols(FILE *fp, enum line_type type)
     }
     return;
 }
+/*this function iterates through the symbol table and simply frees node by node. */
 
 void free_symbol_table(){
     symbol *p,*q;

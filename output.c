@@ -6,6 +6,7 @@ void add_assembly_postfix(char *file_name)
     return;
 }
 
+/*this is simply a shell function that receives a filename and create output files according to the memory image*/
 void make_output(char *file_name)
 {
     make_object_file(file_name);
@@ -13,7 +14,9 @@ void make_output(char *file_name)
     make_symbol_file(file_name,external,EXTERN_POSTFIX);
     return;
 }
-
+/*this function creates either .ext and .ent files in case any external or entry lines detected. 
+it receives a filename, the type and the postfix. it then concatenates the filename and the postfix, counts the number of symbols of the symbol type, opens 
+a file if any symbol of that type were declared, and prints the symbols and their values into the file*/
 void make_symbol_file(char *filename,enum line_type type,char *extension)
 {
     FILE *fp;
@@ -47,7 +50,9 @@ void make_symbol_file(char *filename,enum line_type type,char *extension)
 
     return;
 }
-
+ 
+/*this function receives a filename, we add the .ob extension to it, then we print the memory image into the file, and the sum of instruction lines, and 
+data lines then print the line number and its content in octal base.*/
 void make_object_file(char *filename)
 {
     short temp_IC = 0; 

@@ -6,6 +6,11 @@ int line_counter; /*tells which line our errors refers to in the assembly file*/
 unsigned char error_flag,second_pass_flag; /*if error flags is up. meaning assembly files has errors, no files will be created. second pass flag makes sure 
                                             errors don't reappear in the second pass as well creating double-errors*/
 
+/*this function receives a file pointer to the file we opened with the .as extension, and a filename we opened. 
+it checks line by line. while we don't reach the end of the file, we check if a line has a symbol declaration.
+we then divide it by casesm for instruction line or data line, and for synbol declaration in the line or not. 
+we add all symbols in the first pass into symbol table so that in the second pass we can go through everything with the rigt lines*/
+
 void first_pass(FILE *fp, char *file_name)
 {
     char line_flag; /*tells if the line has a symbol decleration*/
@@ -36,7 +41,7 @@ void first_pass(FILE *fp, char *file_name)
                 if(symbol_name == NULL || !(*symbol_name))
                 {
                     error_flag = TRUE;
-                    fprintf(stderr,"assembly: Invaild symbol name (line %d)\n",line_counter);
+                    fprintf(stderr,"Assembler: Invaild symbol name (line %d)\n",line_counter);
                 } 
                 add_symbol(symbol_name,DC,current_type);
             }
@@ -66,7 +71,7 @@ void first_pass(FILE *fp, char *file_name)
                 if(symbol_name == NULL || !(*symbol_name)) /*sign that the symbol name in invalid*/
                 {
                     error_flag = TRUE;
-                    fprintf(stderr,"assembly: Invaild symbol name (line %d)\n",line_counter);
+                    fprintf(stderr,"Assembler: Invaild symbol name (line %d)\n",line_counter);
                 } 
                 add_symbol(symbol_name,IC+LOAD_SPACE,code);
             }
@@ -88,7 +93,9 @@ void first_pass(FILE *fp, char *file_name)
     return;
 }
 
-
+/*this function is being executed after the first pass. we receive the pointer to the file we opened and a filename. the symbol table should already been
+dealt with and we simply decode the symbols and go through it again. if  the line is instruction then we divide it by number of opcodes it has, if its non instruction
+then its entry and we check its validity and decode it if necessary.*/
 int second_pass(FILE *fp, char *file_name)
 {
     int IC_temp=0 ,line_cnt_tmp=0, L; 
@@ -110,7 +117,7 @@ int second_pass(FILE *fp, char *file_name)
         if( (line_flag = get_line(fp,current_line)) == EOF)
         {
             error_flag =TRUE;
-            fprintf(stderr,"assembly: returned EOF from the source file in the second pass \n");
+            fprintf(stderr,"Assembler: returned EOF from the source file in the second pass \n");
             return 0;
         }
 
@@ -136,14 +143,14 @@ int second_pass(FILE *fp, char *file_name)
                 if NOT_OK_CHAR(token) /*if symbol startswith a non-legit character*/
                 {
                     error_flag = TRUE;
-                    fprintf(stderr,"assembly: entry line without arguments (line %d) \n",line_cnt_tmp);
+                    fprintf(stderr,"Assembler: entry line without arguments (line %d) \n",line_cnt_tmp);
                     continue;
                 }
 
                 if (!add_entry(token)) /*if the symbol not exist in the symbol_table*/
                 {
                     error_flag = TRUE;
-                    fprintf(stderr,"assembly: non existing symbol in entry line (line %d)\n",line_cnt_tmp);
+                    fprintf(stderr,"Assembler: non existing symbol in entry line (line %d)\n",line_cnt_tmp);
                 }
 
             }
@@ -193,7 +200,7 @@ int second_pass(FILE *fp, char *file_name)
                 if(! add_symbol_value(token,IC_temp+1)) /*adding the symbol value to the memory, if the symbol don't exist, returns 0*/
                 {
                     error_flag=TRUE;
-                    fprintf(stderr,"assembly: Using undefined symbol (line %d)\n",line_cnt_tmp);
+                    fprintf(stderr,"Assembler: Using undefined symbol (line %d)\n",line_cnt_tmp);
                 }
 
                 IC_temp+=L;
@@ -224,7 +231,7 @@ int second_pass(FILE *fp, char *file_name)
                     if(! add_symbol_value(token,IC_temp+1)) /*adding the symbol value to the memory, if the symbol don't exist, returns 0*/
                     {
                         error_flag=TRUE;
-                        fprintf(stderr,"assembly: Using undefined symbol (line %d)\n",line_cnt_tmp);
+                        fprintf(stderr,"Assembler: Using undefined symbol (line %d)\n",line_cnt_tmp);
                     }
                 }
 
@@ -249,7 +256,7 @@ int second_pass(FILE *fp, char *file_name)
                     if(! add_symbol_value(token,IC_temp+2)) /*adding the symbol value to the memory, if the symbol don't exist, returns 0*/
                     {
                         error_flag=TRUE;
-                        fprintf(stderr,"assembly: Using undefined symbol (line %d)\n",line_cnt_tmp);
+                        fprintf(stderr,"Assembler: Using undefined symbol (line %d)\n",line_cnt_tmp);
                     }
                 }
 

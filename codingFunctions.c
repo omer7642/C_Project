@@ -4,8 +4,8 @@
 /*
     'code_data':  This function recives a line from the source code, The type of this line (code/data),
     and a flag that represent if there is a decleration of symbol in the line.
-    the function decoding the code line to binary and implementing the data in the data_emory.
-    The function Increasing the Data Counter by need, and printing an error to the standart output in error situations.
+    the function decodes the code line to binary and implements the data in the data_memory.
+    The function increases the Data Counter by need, and prints an error to the standard output in error situations.
 */
 void code_data(char *line,enum line_type type,int symbol_flag)
 {
@@ -161,6 +161,10 @@ void code_data(char *line,enum line_type type,int symbol_flag)
 }
 
 /*////////////////   INSTRUCTION //////////////////*/
+
+/*code instruction receives an instruction line from the source code , the index of of the command or opcode, and the line flag aka symbol flag, which tells if
+a symbol was declared in the line. it then divides into 3 different situations, whether the opcode has two operands, one operand and no operands at all.
+then it checks for the addressing type. in the end it decodes the data into memory*/
 
 void code_instruction(char *line,int command_ind,int symbol_flag)
 {
@@ -479,7 +483,7 @@ void code_instruction(char *line,int command_ind,int symbol_flag)
 
 
      free(temp_line);
-} /*end of function code_instruction*/
+} 
 
 
 

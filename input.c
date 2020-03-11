@@ -1,5 +1,9 @@
 #include "input.h"
 
+/*this line simply get the line from the file, char by char. first it removes spaces at the beginning of the line. once a fist non space digit is 
+encountered , the line isn't empty. if ':' then the line is treated as a symbol declaration line, if ';' then we skip to the end of the line and declare it as
+an empty (comment) line. also, the function removes any redundant spaces and keeps a less complex line for us to decrypt on a later stage. 
+returns TRUE if a symbol is declared, FALSE if not, EMPTY_LINE for comment or empty lines, and ERROR_SIGN in case of errors.*/
 char get_line(FILE *fp, char *current_line)
 {
 	char c; /*current char read from the file*/
@@ -40,7 +44,8 @@ char get_line(FILE *fp, char *current_line)
 
 	return isDeclaration;
 }
-
+/*this function reveices a line and checks for its type. if .extern is found there, then its an extern symbol declaration, if .entry, then entry symbol
+declaration. if .data or .string its a data line, otherise its an instruction line.*/
 enum line_type check_type(char *current_line)
 {
     char *temp = (char *)malloc(sizeof(char) * strlen(current_line)); /*instead of changing the original line, do all changes on a temp string*/
@@ -71,6 +76,8 @@ enum line_type check_type(char *current_line)
     return code;
 }
 
+/*this function receives a line and a flag to know if a symbol was declared or not, and it extracts the command and eventually, after comparison, returns 
+the opcode ERROR SIGN*/
 int get_command(char *current_line,unsigned char line_flag)
 {
     char *command = (char *)malloc(sizeof(char) * (MAX_COMMAND_LENGTH + 1)); 
@@ -129,6 +136,8 @@ int get_command(char *current_line,unsigned char line_flag)
         return ERROR_SIGN;
 }
 
+/*this function gets a line and a symbol string. and it fills the symbol string with the symbol name until ':' not included. it checks that first letter is
+a capital letter and that all other are letters or digits. if invalid symbol name was detected, an error is thrown and symbol string is \n\0*/
 char *get_symbol(char *current_line,char *symbol_name)
 {
     int i = 0,j=0; /*index of iteration*/
@@ -165,8 +174,8 @@ char *get_symbol(char *current_line,char *symbol_name)
     else /*if not a reserved phrase, then it's a legal symbol and thus can be returned*/
         return symbol_name;
 }
-
-BOOL isSavedPhrase(char *symbol_name)
+/*this function simply compares symbol name with saved phrases to see whether it equals one of them*/
+BOOL isSavedPhrase(char *symbol_name) 
 {
     /*checks each saved phrase*/
     if(!strcmp(symbol_name, "r0"))
@@ -221,7 +230,7 @@ BOOL isSavedPhrase(char *symbol_name)
         return FALSE;
 }
 
-
+/*this function receives an operand check its addressing type, and for each type whether it was submitted correctly */
 
 int get_address_type(char * operand)
 {
@@ -290,6 +299,9 @@ int get_address_type(char * operand)
     
 }
 
+/*this function is used in immediate addressing type of negative numbers. it converts a negative number between -2048 to 0 into a number in binary.
+we have to notice that the given number can only be represented in 11 bits, since 3 bits go to A,R,E field and 1 bit goes to the sign of the numbe, and we have
+only 15 bits numbers r*/
 int complement_2 (int num)
 {
     num *= -1; /*make the number positive.*/
