@@ -3,7 +3,7 @@
 symbol *symbol_table = NULL; /*the symbol table*/
 
 /*this function receives a symbol name, value in memory and type. it iterates through symbol table to check that the symbol isn't defined.
-if its not declared its already an ok symbol (legality of symbol syntax is defined in other functions) then it adds a new node to symbol table
+(legality of symbol syntax is defined in other functions) Then it adds a new node to symbol table
 and puts the name, value and type inside.*/
 void add_symbol(char * symbolN,int memory_value ,enum line_type type){
     symbol *tmp,*p;
@@ -68,16 +68,22 @@ void add_extern(char *line){
             fprintf(stderr,"Assembler: error - symbol name is invaild  (line %d)\n",line_counter);
             return;
         }
-    
-    /*need to add function - that checks if a word is a saved word (for example: 'mov' , 'add' ....) !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  */
-    
+
+    if(isSavedPhrase(token)) /*checking if the symbol is a saved pharse*/
+    {
+        error_flag=1;
+        fprintf(stderr, "Assembler: declared a symbol that's a reserved phrase (line %d)\n", line_counter);
+        return;
+    }
+
     /*if all the test went good, adding the symbol to the symbol table with the value 0 */
     add_symbol(token,EXT_VALUE,external); 
 
     free(temp_line);
      
 }
-/*this function goes throught all the symbol table, and check. if its either a data or string symbol, it updates its value and adds IC + 100*/
+
+/*this function goes throught all the symbol table, and check if its either a data or string symbol, it updates its value and adds IC + LOAD SPACE*/
 void update_data_symbol()
 {
     symbol *curr = symbol_table;
@@ -108,6 +114,7 @@ int add_entry(char *symbol_name)
 
     return isFound;
 }
+
 /*this function receives a symbol name - as token , and index in the memory and it adds it to the memory according to its value. if it an external value is 0
 else it has a value and R bit is on. */
 int add_symbol_value(char *token, int index)
@@ -153,7 +160,7 @@ int add_symbol_value(char *token, int index)
     return isFound;
 }
 
-/*this function receives a type, iterates throught the symbol table and says how many symbols are of the given type*/
+/*this function receives a type, iterates throught the symbol table and returns how many symbols are of the given type*/
 int get_symbol_amount(enum line_type type)
 {
     symbol *p = symbol_table; /*the variable we use to iterate through the symbol table*/
@@ -168,32 +175,9 @@ int get_symbol_amount(enum line_type type)
     return count;        
     
 }
-/*we enter this function for entry lines only. it receives a line and a symbol flag. it gets the symbol name, if a symbol is defined in entry line it throws
-an error, then it gets the symbol itself, sees it is a saved phrase, if not then it adds to the symbol line with value 0 (entry symbol) */
-void add_entry_symbol(char *current_line,int symbol_flag)
-{
-    char *token;
-    token = strtok(current_line," \t"); /*getting the first word of the line*/
-    if(symbol_flag)
-    {
-        fprintf(stderr,"Warning: defining a symbol in entry line\n");
-        token = strtok(NULL," \t");
-    }
 
-    token = strtok(NULL," \t"); /*getting the symbol name*/
 
-    if(isSavedPhrase(token)) /*uf the symbol is a saved phrase*/
-    {
-        error_flag = TRUE;
-        fprintf(stderr,"Assembler: using a saved word for symbol name\n");
-        return;
-    }
-
-    add_symbol(token,0,entry);
-
-}
-
-/*this function receives a file pointer, and a type. it prints to the file all symbols vales that match the type we enteres, and their names*/
+/*this function receives a file pointer, and a type. it prints to the file all symbols names and value that match to the type we enteres*/
 void print_symbols(FILE *fp, enum line_type type)
 {
     symbol *ptr = symbol_table;
@@ -209,8 +193,8 @@ void print_symbols(FILE *fp, enum line_type type)
     }
     return;
 }
-/*this function iterates through the symbol table and simply frees node by node. */
 
+/*this function iterates through the symbol table and simply frees node by node. */
 void free_symbol_table(){
     symbol *p,*q;
 
@@ -225,7 +209,7 @@ void free_symbol_table(){
 
 
     
-    symbol_table = NULL; /*at the end symbol table gets a NULL value*/
+    symbol_table = NULL; /*at the end , symbol table gets a NULL value*/
 
     return;
 }

@@ -1,11 +1,11 @@
-.entry LIST
+;start of the program
 .extern fn1
- ;start of the program
+.extern L3
         ;another line of test
 MAIN:   add r0,LIST
         jsr fn1
 LOOP:   prn #48
-        lea     STR,r6
+        lea  
         inc r6
         mov *r6,L3
         sub r1,r4
@@ -17,10 +17,12 @@ LOOP:   prn #48
 .entry MAIN
         jmp LOOP
 END:    stop
-STR:    .string "abcd"
-LIST:   .data   6,9
+STR:    .string "abcd
+        .string         abcd"
+LIST:   .data
+        .string 
         .data -100
 K:      .data 31
 ;unimportant comment
-.extern L3
+
 ;test line at the END

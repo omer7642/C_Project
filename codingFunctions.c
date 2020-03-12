@@ -20,18 +20,26 @@ void code_data(char *line,enum line_type type,int symbol_flag)
     token = strtok(temp_line," "); /*Extracting the command from the line (.data / .string)*/
     if(symbol_flag)
         token = strtok(NULL," "); /*if there is a symbol so the previous instruction extracted the symbol and now we extract the command*/
-            
+    
 
     if(type == string)
     {
         token = strtok(NULL,"\0"); /*getting the string from the line*/
-        L = strlen(token);
         
+
+        if(!token || token[i]=='\0'){ /*in case there are no parameters.*/
+            error_flag=TRUE;
+            fprintf(stderr,"Assembler: Missing Parametres in '.string' (line %d)\n",line_counter);
+            return;
+        }
+
+        
+        L = strlen(token);
 
         if(token[0]!='\"' || token[L-1]!='\"') /*cheking syntax of string*/
         {
             error_flag=TRUE;
-            fprintf(stderr,"Assembler: error - missing quotation marks (line %d)\n",line_counter);
+            fprintf(stderr,"Assembler: Missing quotation marks (line %d)\n",line_counter);
             return;
         }
         
@@ -43,7 +51,7 @@ void code_data(char *line,enum line_type type,int symbol_flag)
             if(token[i]<MIN_VISABLE_ASCII || token[i] >MAX_VISABLE_ASCII) /*of the string has a non ASCII character*/
             {
                 error_flag=TRUE;
-                fprintf(stderr,"Assembler: Invalid character in .string (line %d)\n",line_counter);
+                fprintf(stderr,"Assembler: Invalid character in '.string' (line %d)\n",line_counter);
                 return;
             } 
            data_memory[DC+j] = token[i]; /*Inserting the character into data_memory*/
@@ -57,15 +65,15 @@ void code_data(char *line,enum line_type type,int symbol_flag)
     else{ /*type == data*/
         
         token = strtok(NULL,"\0"); /*data eneterd as a token*/
-        length = strlen(token);  
 
-        if(!token){ /*in case there are no parameters.*/
+        if(!token || token[i]=='\0'){ /*in case there are no parameters.*/
             error_flag=TRUE;
-            fprintf(stderr,"Assembler: error - Missing Parametres in '.data' (line %d)\n",line_counter);
+            fprintf(stderr,"Assembler: Missing Parametres in '.data' (line %d)\n",line_counter);
             return;
         }
 
-        i=0;
+        length = strlen(token); 
+
         for(i=0;i<length;i++)
         { /*scanning the line and each comma presents a number (Exepct the last number)*/
             if(i!=length-1)
@@ -164,7 +172,8 @@ void code_data(char *line,enum line_type type,int symbol_flag)
 
 /*code instruction receives an instruction line from the source code , the index of of the command or opcode, and the line flag aka symbol flag, which tells if
 a symbol was declared in the line. it then divides into 3 different situations, whether the opcode has two operands, one operand and no operands at all.
-then it checks for the addressing type. in the end it decodes the data into memory*/
+then it checks for the addressing type. in the end it decodes the data into the memory memory of the computer and updating the 
+Instraction counter*/
 
 void code_instruction(char *line,int command_ind,int symbol_flag)
 {
@@ -174,9 +183,9 @@ void code_instruction(char *line,int command_ind,int symbol_flag)
     enum address_type src_address, des_address;
     unsigned mask = 1; /*a mas later to be used for bitwise operations and decoding*/
 
-    EXIT_IF_RUNOUT_MEMORY
-    strcpy(temp_line,line);
+    EXIT_IF_RUNOUT_MEMORY /*Cheking for free space in the computer memory*/
 
+    strcpy(temp_line,line);
 
     switch (command_ind)
     {
@@ -194,7 +203,7 @@ void code_instruction(char *line,int command_ind,int symbol_flag)
                     if(symbol_flag)
                         token = strtok(NULL," "); /* if there is a symbol, skipping again.*/
                    
-                    token = strtok(NULL," ,"); /*getting out the source operand*/
+                    token = strtok(NULL,","); /*getting out the source operand*/
 
                     if (!token) /*in-case line with no opernad*/
                     {   

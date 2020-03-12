@@ -1,7 +1,7 @@
 #include "input.h"
 
-/*this line simply get the line from the file, char by char. first it removes spaces at the beginning of the line. once a fist non space digit is 
-encountered , the line isn't empty. if ':' then the line is treated as a symbol declaration line, if ';' then we skip to the end of the line and declare it as
+/*this line simply get the line from the file, char by char. first it removes spaces at the beginning of the line. once a fist non space char is 
+encountered , the line isn't empty. if ':' found, then the line is treated as a symbol declaration line, if ';' found then we skip to the end of the line and declare it as
 an empty (comment) line. also, the function removes any redundant spaces and keeps a less complex line for us to decrypt on a later stage. 
 returns TRUE if a symbol is declared, FALSE if not, EMPTY_LINE for comment or empty lines, and ERROR_SIGN in case of errors.*/
 char get_line(FILE *fp, char *current_line)
@@ -44,6 +44,7 @@ char get_line(FILE *fp, char *current_line)
 
 	return isDeclaration;
 }
+
 /*this function reveices a line and checks for its type. if .extern is found there, then its an extern symbol declaration, if .entry, then entry symbol
 declaration. if .data or .string its a data line, otherise its an instruction line.*/
 enum line_type check_type(char *current_line)
@@ -174,7 +175,9 @@ char *get_symbol(char *current_line,char *symbol_name)
     else /*if not a reserved phrase, then it's a legal symbol and thus can be returned*/
         return symbol_name;
 }
-/*this function simply compares symbol name with saved phrases to see whether it equals one of them*/
+
+/*this function simply compares symbol name with saved phrases to see whether it equals one of them,
+If found equal, it means that the symbol name is a saved phrase, and need to return error*/
 BOOL isSavedPhrase(char *symbol_name) 
 {
     /*checks each saved phrase*/
@@ -230,7 +233,8 @@ BOOL isSavedPhrase(char *symbol_name)
         return FALSE;
 }
 
-/*this function receives an operand check its addressing type, and for each type whether it was submitted correctly */
+/*this function receives an operand check its addressing type by the rules defined by the course, and for each type checking whether it was submitted correctly.
+An error message will be printed if needed*/
 
 int get_address_type(char * operand)
 {
@@ -260,7 +264,7 @@ int get_address_type(char * operand)
     
     
 
-    else if(operand[i] == '*') 
+    else if(operand[i] == '*') /* Check if the first char of the operand indicateds that is a indirect register address type*/
     {
         i++;
         if(operand[i] == 'r' && (operand[i+1] >= '0' && operand[i+1] <= '7')) /*if a valid register name after the */
@@ -276,7 +280,7 @@ int get_address_type(char * operand)
     }
 
 
-    else if(operand[i] == 'r') /*if a register direct addressing type*/
+    else if(operand[i] == 'r') /** Check if the first char of the operand indicateds that is a direct register address type*/
     {
         i++;
         if (operand[i] >= '0' && operand[i] <= '7') /*if a valid register name*/
@@ -306,8 +310,6 @@ int complement_2 (int num)
 {
     num *= -1; /*make the number positive.*/
     /*issue a warning if the number is too high*/
-    if(num >= MAX_VALUE)
-        fprintf(stderr, "WARNING, number too large on line %d, data loss is applicable\n", line_counter);
     num = ~num; /*invert the bits in the number*/
     num += 1; /*add 1*/
     

@@ -13,7 +13,6 @@ void code_data(char *,enum line_type,int); /*this function decodes the data line
 void code_instruction(char *,int,int); /*decodes instruction lines, defined in codingFunctions.c*/
 int get_address_type(char *); /*recieves an operand and returns its adderessing type. if error it returns -1. defined in input.c*/
 int add_symbol_value(char *,int); /*fills the field of value of the symbol according to the type of the symbols, with the right flags up*/
-void add_entry_symbol(char *,int); /*adds a valid entry sombols into the symbol table*/
 int add_entry(char *); /*checks to see if an entry symbol exists, update its type and its value accordingly*/
 void update_data_symbol();  /*update value to IC+100*/
 

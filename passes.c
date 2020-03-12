@@ -6,10 +6,10 @@ int line_counter; /*tells which line our errors refers to in the assembly file*/
 unsigned char error_flag,second_pass_flag; /*if error flags is up. meaning assembly files has errors, no files will be created. second pass flag makes sure 
                                             errors don't reappear in the second pass as well creating double-errors*/
 
-/*this function receives a file pointer to the file we opened with the .as extension, and a filename we opened. 
+/*this function receives a file pointer to the file we opened the file name . 
 it checks line by line. while we don't reach the end of the file, we check if a line has a symbol declaration.
-we then divide it by casesm for instruction line or data line, and for synbol declaration in the line or not. 
-we add all symbols in the first pass into symbol table so that in the second pass we can go through everything with the rigt lines*/
+then the function divided  by cases, for instruction line or data line, and for synbol declaration in the line or not. 
+the function add all symbols  that decalred symbol table */
 
 void first_pass(FILE *fp, char *file_name)
 {
@@ -27,14 +27,14 @@ void first_pass(FILE *fp, char *file_name)
     line_counter=0; 
 
 
-    while( (line_flag = get_line(fp,current_line))!= EOF)
+    while( (line_flag = get_line(fp,current_line))!= EOF) /*getting the current line from the file*/
     {    
         line_counter++;
         if(line_flag == EMPTY_LINE) /*if emptry line, we just count it in line_counter and go to the next iteration*/
             continue;
         
         current_type = check_type(current_line);   /*checking the type of the current line : 0-code,1-data,2-string,3-entry,4-extern*/
-        if(current_type)
+        if(current_type) /*every line type but instraction*/
         { 
             if(line_flag){ /*if symbol is declared in this line*/
                 get_symbol(current_line,symbol_name);
@@ -46,9 +46,8 @@ void first_pass(FILE *fp, char *file_name)
                 add_symbol(symbol_name,DC,current_type);
             }
 
-            if(current_type == entry)  /*I dont think this action needed*/
+            if(current_type == entry) /*entry lines threated in the second pass*/
             {   
-                /*add_entry_symbol(current_line,line_flag);*/
                 continue;
             }
 
@@ -57,7 +56,7 @@ void first_pass(FILE *fp, char *file_name)
                 add_extern(current_line); /*adding to the symbol table all the operators in the extern line.*/
             }
 
-            else
+            else /*code line*/
             {
                 code_data(current_line,current_type,line_flag);
             }
@@ -87,6 +86,7 @@ void first_pass(FILE *fp, char *file_name)
     
     for( i=IC ,j=0 ; j<DC ; j++,i++) /*merging the two data structures;*/
         memory[i] = data_memory[j];
+
     update_data_symbol();/*adding to all data symbol the value of IC+100 because the merging of the data structures*/
 
     
@@ -107,6 +107,7 @@ int second_pass(FILE *fp, char *file_name)
 
 
     EXIT_IF_RUNOUT_MEMORY
+
     rewind(fp); /*returning the file pointer to the beggining of the file*/
     second_pass_flag = 1;
     

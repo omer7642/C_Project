@@ -9,7 +9,6 @@
 #define BYTE 8
 #define ADDRESS_METHOD_NUM 4
 #define MAX_WORDS 4096
-#define MAX_VALUE 2048
 #define LOAD_SPACE 100
 #define END_CHAR_SPACE 1
 #define ERROR_SIGN -1
@@ -55,7 +54,7 @@ enum address_type{immediate,direct,register_indirect,register_direct}; /*address
 enum commandE{mov,cmp,add,sub,lea,clr,not,inc,dec,jmp,bne,red,prn,jsr,rts,stop}; /*opcodes values*/
 #endif
 
-/*memory cell in the computer*/
+/*memory cell in the computer's memory*/
 typedef unsigned short int word; 
 
 /*defining the struct symbol*/
