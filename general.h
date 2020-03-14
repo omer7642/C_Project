@@ -20,7 +20,7 @@
 #define R 2
 #define E 1
 #define TRUE 1
-#define FALSE 0
+#define FALSE 0 
 #define MAX_COMMAND_LENGTH 5
 #define EXTRA_SPACE 5
 #define OPCODE_SHIFT 11

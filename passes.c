@@ -119,8 +119,6 @@ void second_pass(FILE *fp, char *file_name)
 
         if ( (line_flag = get_line(fp,current_line)) == EOF)
         {
-            /*error_flag =TRUE;
-            fprintf(stderr,"Assembler: returned EOF from the source file in the second pass \n");*/
             return;
         }
         line_cnt_tmp++;
@@ -141,7 +139,7 @@ void second_pass(FILE *fp, char *file_name)
                     token = strtok(NULL," \t");
 
                 token = strtok(NULL," \t\n"); /*getting the name of the symbol;*/
-
+                    continue;
                 if NOT_OK_CHAR(token) /*if symbol startswith a non-legit character*/
                 {
                     error_flag = TRUE;
@@ -199,7 +197,7 @@ void second_pass(FILE *fp, char *file_name)
                 while ( isspace(*token) ) /*skipping the spaces*/
                     token++;
 
-                if(! add_symbol_value(token,IC_temp+1)) /*adding the symbol value to the memory, if the symbol don't exist, returns 0*/
+                if(! add_symbol_value(token,IC_temp+1) && (*token) != ',') /*adding the symbol value to the memory, if the symbol don't exist, returns 0*/
                 {
                     error_flag=TRUE;
                     
@@ -223,12 +221,16 @@ void second_pass(FILE *fp, char *file_name)
                     continue;
 
                 src_address = get_address_type(token);
+
+                if(src_address == ERROR_SIGN)
+                    continue;
+
                 if(src_address == direct)
                 {
                     while ( isspace(*token) ) /*skipping the spaces*/
                         token++;
 
-                    if(! add_symbol_value(token,IC_temp+1)) /*adding the symbol value to the memory, if the symbol don't exist, returns 0*/
+                    if(! add_symbol_value(token,IC_temp+1) && (*token) != ',') /*adding the symbol value to the memory, if the symbol don't exist, returns 0*/
                     {
                         error_flag=TRUE;
                         fprintf(stderr,"Assembler: Using undefined symbol (line %d)\n",line_cnt_tmp);
@@ -238,6 +240,8 @@ void second_pass(FILE *fp, char *file_name)
                 token = strtok(NULL," \t\n");
                 des_address = get_address_type(token);
                 
+                if(des_address == ERROR_SIGN)
+                    continue;
 
                 if NOT_OK_CHAR(token){ /*found an error in the second pass*/
                     continue;
@@ -253,7 +257,7 @@ void second_pass(FILE *fp, char *file_name)
                     while ( isspace(*token) ) /*skipping the spaces*/
                     token++;
                    
-                    if(! add_symbol_value(token,IC_temp+2)) /*adding the symbol value to the memory, if the symbol don't exist, returns 0*/
+                    if(! add_symbol_value(token,IC_temp+2) && (*token) != ',') /*adding the symbol value to the memory, if the symbol don't exist, returns 0*/
                     {
                         error_flag=TRUE;
                         fprintf(stderr,"Assembler: Using undefined symbol (line %d)\n",line_cnt_tmp);

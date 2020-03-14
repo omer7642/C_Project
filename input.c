@@ -1,5 +1,6 @@
 #include "input.h"
 
+
 /*this function simply gets the line from the file, char by char. first it removes spaces at the beginning of the line. once a fist non space char is 
 encountered , the line isn't empty. if ':' found, then the line is treated as a symbol declaration line, if ';' found then we skip to the end of the line and declare it as
 an empty (comment) line. also, the function removes any redundant spaces and keeps a less complex line for us to decrypt on a later stage. 
@@ -247,18 +248,7 @@ int get_address_type(char * operand)
 
     if(!operand)
         return ERROR_SIGN;
-    /*Checking for correctness
-    while(isspace(operand[i]))
-        i++;
-    while(isdigit(operand[i]) || isalpha(operand[i]))
-        i++;
-    while (isspace(operand[i]))
-        i++;
-    if(operand[i]!='\0')
-        return ERROR_SIGN;
-    */
-   
-    i=0;
+    
 
     if(operand[i] == '#') /*if immediate addressing*/
     {
@@ -330,7 +320,7 @@ int complement_2 (int num)
     num = abs(num); /*make the number positive.*/
     num = ~num; /*invert the bits in the number*/
     num += 1; /*adds 1*/
-    
+
     num <<= (BYTE * sizeof(int) - NEGATIVE_NUM_SPACE); /*move and zero all the numbers left to the first 11 figures to clean all other figures*/
     num >>= (BYTE * sizeof(int) - NEGATIVE_NUM_SPACE);/*move back*/
 
