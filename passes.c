@@ -133,20 +133,17 @@ void second_pass(FILE *fp, char *file_name)
         {
             if (current_type == entry) /*if line is of type entry - meaning an entry symbol is defined there*/
             {
-                
                 token = strtok(temp_line," \t");
                 if(line_flag)
                     token = strtok(NULL," \t");
 
                 token = strtok(NULL," \t\n"); /*getting the name of the symbol;*/
-                    continue;
-                if NOT_OK_CHAR(token) /*if symbol startswith a non-legit character*/
+                if NOT_OK_CHAR(token) /*if symbol starts with a non-legit character*/
                 {
                     error_flag = TRUE;
                     fprintf(stderr,"Assembler: entry line without arguments (line %d) \n",line_cnt_tmp);
                     continue;
                 }
-
                 if (!add_entry(token)) /*if the symbol not exist in the symbol_table*/
                 {
                     error_flag = TRUE;
