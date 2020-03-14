@@ -204,14 +204,24 @@ void code_instruction(char *line,int command_ind,int symbol_flag)
                         token = strtok(NULL," "); /* if there is a symbol, skipping again.*/
                    
                     token = strtok(NULL,","); /*getting out the source operand*/
-
-                    if (!token) /*in-case line with no opernad*/
+                    
+                    if (!token || !(*token) ) /*in-case line with no opernad*/
                     {   
                         error_flag=TRUE;
-                        fprintf(stderr, "Assembler: Instruction Have No Operand (line %d)\n",line_counter);
+
+                        if(!token)
+                        {
+                            fprintf(stderr, "Assembler: Instruction Missing comma (line %d)\n",line_counter);
+                        }
+
+                        else
+                        {
+                            fprintf(stderr, "Assembler: Instruction Have No Operand (line %d)\n",line_counter);
+                        }
+                        
                         return;
                     }
-
+                        
                         src_address = get_address_type(token);  /*getting the address type of the source operand*/
                         if(src_address == ERROR)
                         {
@@ -274,7 +284,13 @@ void code_instruction(char *line,int command_ind,int symbol_flag)
                     
                         }/*end of switch source*/
 
-                    token = strtok(NULL," \n\t"); /*getting out the target operand*/
+                    token = strtok(NULL," \0"); /*getting out the target operand*/
+                    if (!token || !(*token) ) /*in-case line with no opernad*/
+                    {   
+                        error_flag=TRUE;
+                        fprintf(stderr, "Assembler: Instruction - Missing Comma Or Operand (line %d)\n",line_counter);
+                        return;
+                    }
                     des_address = get_address_type(token);  /*getting the address type of the target operand*/
                     if(des_address == ERROR)
                         {

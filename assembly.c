@@ -52,9 +52,7 @@ int main(int argc, char **argv)
        data_memory = (word *)malloc(sizeof(word)*MAX_WORDS);
 
         first_pass(current_fp,file_name);/*the first pass*/
-
-        free (data_memory); /*merging the data structures in the end of first pass*/
-        
+        free(data_memory);
         second_pass(current_fp,file_name); /*the second pass*/
 
     

@@ -241,6 +241,20 @@ int get_address_type(char * operand)
     enum address_type curr_type; /*we return it eventually, if all is well*/
     int i=0; /*running index*/
 
+    if(!operand)
+        return -1;
+    /*Checking for correctness*/
+    while(isspace(operand[i]))
+        i++;
+    while(isdigit(operand[i]) || isalpha(operand[i]))
+        i++;
+    while (isspace(operand[i]))
+        i++;
+    if(operand[i]!='\0')
+        return -1;
+
+    i=0;
+
     if(operand[i] == '#') /*if immediate addressing*/
     {
         i++;

@@ -122,6 +122,8 @@ int add_symbol_value(char *token, int index)
     symbol *curr = symbol_table ; /*represents current node*/
     int isFound = FALSE;
 
+    token = strtok(token," ");//if there is a space after the symbol
+
     while(curr) /*looping through the table either until no symbol found or one is found*/
     {
         if( !strcmp(curr->symbol_name,token)) /*if we found the symbol that we're looking for*/

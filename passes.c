@@ -80,15 +80,17 @@ void first_pass(FILE *fp, char *file_name)
         }
    
     }/*end of while*/
+
     /*free the dynamic memory the we used in the function*/
-        free(current_line);
-        free(symbol_name);
+    free(current_line);
+    free(symbol_name);
     
+    EXIT_IF_RUNOUT_MEMORY
+
     for( i=IC ,j=0 ; j<DC ; j++,i++) /*merging the two data structures;*/
         memory[i] = data_memory[j];
 
     update_data_symbol();/*adding to all data symbol the value of IC+100 because the merging of the data structures*/
-
     
     return;
 }
@@ -98,13 +100,12 @@ dealt with and we simply decode the symbols and go through it again. if  the lin
 then its entry and we check its validity and decode it if necessary.*/
 int second_pass(FILE *fp, char *file_name)
 {
-    int IC_temp=0 ,line_cnt_tmp=0, L; 
+    int IC_temp=0 ,line_cnt_tmp=0, L,i=0; 
     char *token,line_flag,command;
     enum line_type current_type; /*type of the line (instruction,data,string,entry,external)*/
     enum address_type address,des_address,src_address;
     char *current_line = (char *)malloc(MAX_LINE); /*holds the current command line*/
     char *temp_line = (char *)malloc(MAX_LINE);
-
 
     EXIT_IF_RUNOUT_MEMORY
 
@@ -131,7 +132,6 @@ int second_pass(FILE *fp, char *file_name)
 
         if(current_type) /*if a non-instruction line*/
         {
-
             if (current_type == entry) /*if line is of type entry - meaning an entry symbol is defined there*/
             {
                 
@@ -162,7 +162,7 @@ int second_pass(FILE *fp, char *file_name)
         else /*instruction line*/
         {
             command = get_command(current_line, line_flag); /*extract the opcode of the command*/
-
+            
             if(command<0) /*undefined command line*/
                 continue; 
             
@@ -201,6 +201,7 @@ int second_pass(FILE *fp, char *file_name)
                 if(! add_symbol_value(token,IC_temp+1)) /*adding the symbol value to the memory, if the symbol don't exist, returns 0*/
                 {
                     error_flag=TRUE;
+                    
                     fprintf(stderr,"Assembler: Using undefined symbol (line %d)\n",line_cnt_tmp);
                 }
 
@@ -210,24 +211,22 @@ int second_pass(FILE *fp, char *file_name)
             else /*two operand op codes*/
             {
                 L=3;
+                i=0;
 
-                token = strtok(current_line," \t");
+                token = strtok(temp_line," \t");
                 if(line_flag)
                     token = strtok(NULL," \t");
 
                 token = strtok(NULL,","); /*getting the first operand*/
-                
-                if NOT_OK_CHAR(token){ /*found an error in the second pass*/
-                    L--;
+
+                if(!token)
                     continue;
-                }
 
                 src_address = get_address_type(token);
-                
                 if(src_address == direct)
                 {
                     while ( isspace(*token) ) /*skipping the spaces*/
-                    token++;
+                        token++;
 
                     if(! add_symbol_value(token,IC_temp+1)) /*adding the symbol value to the memory, if the symbol don't exist, returns 0*/
                     {
@@ -235,12 +234,12 @@ int second_pass(FILE *fp, char *file_name)
                         fprintf(stderr,"Assembler: Using undefined symbol (line %d)\n",line_cnt_tmp);
                     }
                 }
-
+   
                 token = strtok(NULL," \t\n");
                 des_address = get_address_type(token);
+                
 
                 if NOT_OK_CHAR(token){ /*found an error in the second pass*/
-                    L--;
                     continue;
                 }
 
@@ -253,7 +252,7 @@ int second_pass(FILE *fp, char *file_name)
                 {
                     while ( isspace(*token) ) /*skipping the spaces*/
                     token++;
-
+                   
                     if(! add_symbol_value(token,IC_temp+2)) /*adding the symbol value to the memory, if the symbol don't exist, returns 0*/
                     {
                         error_flag=TRUE;
