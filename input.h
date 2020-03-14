@@ -1,4 +1,7 @@
 #include "general.h"
+/*defines*/
+#define NEGATIVE_NUM_SPACE 11
+
 
 char get_line(FILE *,char *);       /*gets the line from the users and checks for general errors. returns -1 if EOF, 0 if line without a symbol declaration, or 1 with symbol declaration*/
 enum line_type check_type(char *);  /*returns the type of the line , code, data, string, extern or entry*/ 

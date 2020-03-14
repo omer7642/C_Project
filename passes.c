@@ -34,7 +34,7 @@ void first_pass(FILE *fp, char *file_name)
             continue;
         
         current_type = check_type(current_line);   /*checking the type of the current line : 0-code,1-data,2-string,3-entry,4-extern*/
-        if(current_type) /*every line type but instraction*/
+        if(current_type) /*every line type but instruction*/
         { 
             if(line_flag){ /*if symbol is declared in this line*/
                 get_symbol(current_line,symbol_name);
@@ -64,7 +64,6 @@ void first_pass(FILE *fp, char *file_name)
         }
         
         else{  /*instruction line*/
-            
             if(line_flag){
                 get_symbol(current_line,symbol_name);
                 if(symbol_name == NULL || !(*symbol_name)) /*sign that the symbol name in invalid*/
@@ -74,6 +73,7 @@ void first_pass(FILE *fp, char *file_name)
                 } 
                 add_symbol(symbol_name,IC+LOAD_SPACE,code);
             }
+
             command = get_command(current_line,line_flag); /*if -1 error, else return the index of the command.*/
             code_instruction(current_line,command,line_flag); /*getting the line, Instruction ,the command index, and line flag - If there is a symbol or not*/
             
@@ -84,12 +84,14 @@ void first_pass(FILE *fp, char *file_name)
     /*free the dynamic memory the we used in the function*/
     free(current_line);
     free(symbol_name);
-    
+
+
     EXIT_IF_RUNOUT_MEMORY
 
     for( i=IC ,j=0 ; j<DC ; j++,i++) /*merging the two data structures;*/
         memory[i] = data_memory[j];
 
+    
     update_data_symbol();/*adding to all data symbol the value of IC+100 because the merging of the data structures*/
     
     return;
@@ -98,9 +100,9 @@ void first_pass(FILE *fp, char *file_name)
 /*this function is being executed after the first pass. we receive the pointer to the file we opened and a filename. the symbol table should already been
 dealt with and we simply decode the symbols and go through it again. if  the line is instruction then we divide it by number of opcodes it has, if its non instruction
 then its entry and we check its validity and decode it if necessary.*/
-int second_pass(FILE *fp, char *file_name)
+void second_pass(FILE *fp, char *file_name)
 {
-    int IC_temp=0 ,line_cnt_tmp=0, L,i=0; 
+    int IC_temp=0 ,line_cnt_tmp=0, L; 
     char *token,line_flag,command;
     enum line_type current_type; /*type of the line (instruction,data,string,entry,external)*/
     enum address_type address,des_address,src_address;
@@ -110,25 +112,24 @@ int second_pass(FILE *fp, char *file_name)
     EXIT_IF_RUNOUT_MEMORY
 
     rewind(fp); /*returning the file pointer to the beggining of the file*/
-    second_pass_flag = 1;
-    
+    second_pass_flag = TRUE;
     while(IC_temp < IC)
     {
         L=0;
 
-        if( (line_flag = get_line(fp,current_line)) == EOF)
+        if ( (line_flag = get_line(fp,current_line)) == EOF)
         {
-            error_flag =TRUE;
-            fprintf(stderr,"Assembler: returned EOF from the source file in the second pass \n");
-            return 0;
+            /*error_flag =TRUE;
+            fprintf(stderr,"Assembler: returned EOF from the source file in the second pass \n");*/
+            return;
         }
-
         line_cnt_tmp++;
+        if (line_flag == EMPTY_LINE) /*of the line is empty, simply do nothing and continue to next line*/
+            continue;
+        
         current_type = check_type(current_line);   /*checking the type of the current line : 0-code,1-data,2-string,3-entry,4-extern*/
         strcpy(temp_line,current_line);
 
-        if (line_flag == EMPTY_LINE) /*of the line is empty, simply do nothing and continue to next line*/
-            continue;
 
         if(current_type) /*if a non-instruction line*/
         {
@@ -211,7 +212,6 @@ int second_pass(FILE *fp, char *file_name)
             else /*two operand op codes*/
             {
                 L=3;
-                i=0;
 
                 token = strtok(temp_line," \t");
                 if(line_flag)
@@ -276,5 +276,5 @@ int second_pass(FILE *fp, char *file_name)
     free(current_line);
 
 
-    return 1;
+    return;
 }

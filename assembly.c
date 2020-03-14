@@ -55,7 +55,6 @@ int main(int argc, char **argv)
         free(data_memory);
         second_pass(current_fp,file_name); /*the second pass*/
 
-    
         if(!error_flag)
             make_output(argv[i++]);
     

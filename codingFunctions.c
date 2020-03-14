@@ -226,6 +226,7 @@ void code_instruction(char *line,int command_ind,int symbol_flag)
                         if(src_address == ERROR)
                         {
                             error_flag =TRUE;
+                            fprintf(stderr, "Assembler: source code addressing type failiure in line %d\n", line_counter);
                             return;
                         }
                         memory[IC] |= mask<<(SOURCE_SHIFT+src_address) ; /*decoding the source address of the first word*/
@@ -295,6 +296,7 @@ void code_instruction(char *line,int command_ind,int symbol_flag)
                     if(des_address == ERROR)
                         {
                             error_flag =TRUE;
+                            fprintf(stderr, "Assembler: error destination address type in line %d\n", line_counter);
                             return;
                         }
                     memory[IC] |= mask<<(TARGET_SHIFT+des_address) ; /*decoding the target address of the first word*/
@@ -401,9 +403,10 @@ void code_instruction(char *line,int command_ind,int symbol_flag)
                     }
 
                     des_address = get_address_type(token);
-                    if(des_address == ERROR)
+                    if(des_address == ERROR_SIGN)
                         {
                             error_flag =TRUE;
+                            fprintf(stderr, "Assembler: error destination address type in line %d\n", line_counter);
                             return;
                         }
                     memory[IC] |= mask<<(TARGET_SHIFT+des_address) ; /*decoding the target address of the first word*/

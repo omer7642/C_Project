@@ -1,6 +1,6 @@
 #include "input.h"
 
-/*this line simply get the line from the file, char by char. first it removes spaces at the beginning of the line. once a fist non space char is 
+/*this function simply gets the line from the file, char by char. first it removes spaces at the beginning of the line. once a fist non space char is 
 encountered , the line isn't empty. if ':' found, then the line is treated as a symbol declaration line, if ';' found then we skip to the end of the line and declare it as
 an empty (comment) line. also, the function removes any redundant spaces and keeps a less complex line for us to decrypt on a later stage. 
 returns TRUE if a symbol is declared, FALSE if not, EMPTY_LINE for comment or empty lines, and ERROR_SIGN in case of errors.*/
@@ -49,10 +49,12 @@ char get_line(FILE *fp, char *current_line)
 declaration. if .data or .string its a data line, otherise its an instruction line.*/
 enum line_type check_type(char *current_line)
 {
-    char *temp = (char *)malloc(sizeof(char) * strlen(current_line)); /*instead of changing the original line, do all changes on a temp string*/
+    int L = strlen(current_line);
+    char *temp = (char *)malloc(sizeof(char) * L); /*instead of changing the original line, do all changes on a temp string*/
     char *token;
-    
+  
     strcpy(temp, current_line); /*copy current_line into temp to avoid changing current_line*/
+
     token = strtok(temp, " "); /*get first token*/
     
    
@@ -146,6 +148,7 @@ char *get_symbol(char *current_line,char *symbol_name)
     if(!isalpha(current_line[i]))
     {
                 error_flag = TRUE;
+                fprintf(stderr, "Assembler: invalid symbol name in line %d\n", line_counter);
                 symbol_name = "\n\0";
                 return NULL;
     }
@@ -154,6 +157,7 @@ char *get_symbol(char *current_line,char *symbol_name)
         if(!isalnum(current_line[i]))
         {
                 error_flag = TRUE;
+                fprintf(stderr, "Assembler: invalid symbol name in line %d\n", line_counter);
                 symbol_name = "\n\0";
                 return NULL;
         }
@@ -242,8 +246,8 @@ int get_address_type(char * operand)
     int i=0; /*running index*/
 
     if(!operand)
-        return -1;
-    /*Checking for correctness*/
+        return ERROR_SIGN;
+    /*Checking for correctness
     while(isspace(operand[i]))
         i++;
     while(isdigit(operand[i]) || isalpha(operand[i]))
@@ -251,8 +255,9 @@ int get_address_type(char * operand)
     while (isspace(operand[i]))
         i++;
     if(operand[i]!='\0')
-        return -1;
-
+        return ERROR_SIGN;
+    */
+   
     i=0;
 
     if(operand[i] == '#') /*if immediate addressing*/
@@ -322,13 +327,12 @@ we have to notice that the given number can only be represented in 11 bits, sinc
 only 15 bits numbers r*/
 int complement_2 (int num)
 {
-    num *= -1; /*make the number positive.*/
-    /*issue a warning if the number is too high*/
+    num = abs(num); /*make the number positive.*/
     num = ~num; /*invert the bits in the number*/
-    num += 1; /*add 1*/
+    num += 1; /*adds 1*/
     
-    num <<= (BYTE * sizeof(int) - 11); /*move and zero all the numbers left to the first 11 figures*/
-    num >>= (BYTE * sizeof(int) - 11);/*move back*/
+    num <<= (BYTE * sizeof(int) - NEGATIVE_NUM_SPACE); /*move and zero all the numbers left to the first 11 figures to clean all other figures*/
+    num >>= (BYTE * sizeof(int) - NEGATIVE_NUM_SPACE);/*move back*/
 
     
     return num;

@@ -71,7 +71,7 @@ void add_extern(char *line){
 
     if(isSavedPhrase(token)) /*checking if the symbol is a saved pharse*/
     {
-        error_flag=1;
+        error_flag=TRUE;
         fprintf(stderr, "Assembler: declared a symbol that's a reserved phrase (line %d)\n", line_counter);
         return;
     }
@@ -122,7 +122,7 @@ int add_symbol_value(char *token, int index)
     symbol *curr = symbol_table ; /*represents current node*/
     int isFound = FALSE;
 
-    token = strtok(token," ");//if there is a space after the symbol
+    token = strtok(token," ");/*if there is a space after the symbol*/
 
     while(curr) /*looping through the table either until no symbol found or one is found*/
     {
@@ -130,7 +130,7 @@ int add_symbol_value(char *token, int index)
         {
             if(curr->location == external) /*if its an external label. it has no address (address 0) and the E indicator is up*/
             {
-                if(curr->value==0)
+                if(!(curr->value))
                 {
                     curr->value=index+LOAD_SPACE;
                 }
@@ -149,7 +149,7 @@ int add_symbol_value(char *token, int index)
             else /*if its not an external label, than its a label defined in the file and value is R with the addition of the address it is defined*/
             {
                 memory[index] = R ;
-                memory[index] |= ( (curr->value) << 3);
+                memory[index] |= ( (curr->value) << ARE_SPACE);
                 isFound = TRUE;
                 break;
             }

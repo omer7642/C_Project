@@ -36,6 +36,7 @@
 #define MIN_VALUE_IMMIDIATE -2048
 #define MAX_VALUE_DATA 16383
 #define MIN_VALUE_DATA -16384
+#define ARE_SPACE 3
 
 #define CHECK_MEMORY (DC+IC >= MAX_WORDS) /*Checking if the total Words in the memory is too much*/
 #define EXIT_IF_RUNOUT_MEMORY {\
