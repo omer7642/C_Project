@@ -7,7 +7,7 @@ symbol *symbol_table = NULL; /*the symbol table*/
 and puts the name, value and type inside.*/
 void add_symbol(char * symbolN,int memory_value ,enum line_type type){
     symbol *tmp,*p;
-
+    
     /*checking if the symbol exist*/
     tmp = symbol_table;
 

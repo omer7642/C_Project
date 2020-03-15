@@ -17,7 +17,7 @@ sub L3 ,  L3
 	.entry MAIN
 jmp  LOOP
 END:  		stop
-STR:		.string  "abcd"
+STR:		.string  "abcd"f
 LIST:		.data   6 ,  -3009
 	.data   -100
 K:		.data  31

@@ -19,6 +19,6 @@ jmp  LOOP
 END:  		stop
 STR:		.string  "abcd
 LIST:		.data   6 ,  -3009
-	.data   -100
+	.data   -100,
 K:		.data  31
 	.extern L3

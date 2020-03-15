@@ -41,6 +41,8 @@ int main(int argc, char **argv)
         strcpy(file_name,argv[i]); /*copying the file name to the allocated string*/
         add_assembly_postfix(file_name); /*adding the ".as" postfix to the filename*/
 
+        printf("current file: %s\n",file_name);
+
         current_fp = fopen(file_name,"r");
         if(!current_fp)
         {
@@ -56,11 +58,14 @@ int main(int argc, char **argv)
         second_pass(current_fp,file_name); /*the second pass*/
 
         if(!error_flag)
-            make_output(argv[i++]);
+            make_output(argv[i]);
     
         fclose(current_fp); /*closing the current file */
         free_symbol_table(); /*free the symbol table */
         free(memory); /* free the memory*/
+        
+        fprintf(stderr,"\n\n");
+        i++;
    }
     
     
