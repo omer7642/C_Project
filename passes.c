@@ -207,6 +207,9 @@ void second_pass(FILE *fp, char *file_name)
 
                 if(!token)
                     continue;
+                
+                while(isspace(*token)) /*skipping the spaces before the the operand*/
+                    token++;
 
                 src_address = get_address_type(token);
 
@@ -215,9 +218,6 @@ void second_pass(FILE *fp, char *file_name)
 
                 if(src_address == direct)
                 {
-                    while ( isspace(*token) ) /*skipping the spaces*/
-                        token++;
-
                     if(! add_symbol_value(token,IC_temp+1) && (*token) != ',') /*adding the symbol value to the memory, if the symbol don't exist, returns 0*/
                     {
                         error_flag=TRUE;
@@ -236,7 +236,7 @@ void second_pass(FILE *fp, char *file_name)
                     continue;
                 }
                 
-                token++; /*skip the comma*/
+                token++; /*skip the comma*/ 
                 while(isspace(*token))/*Skipping the spaces before the operand*/
                     token++;
                 

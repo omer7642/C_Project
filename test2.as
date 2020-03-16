@@ -7,13 +7,13 @@ lea STR  , r6
 inc   r6
 mov  *r6  , L3
 sub  r1 , r4
-cmp r3,  #-66,
+cmp r3,  eds
 bne END
 add  r7,  *r6
-clr r7 , r2
+clr r7
 sub L3 ,  L3
 	.entry MAIN
-jmp  LOOP
+jmp  flkf
 END:  		stop
 STR:		.string  "abcd"
 LIST:		.data   6 ,  -3009

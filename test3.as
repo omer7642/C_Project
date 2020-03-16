@@ -2,6 +2,7 @@
 Entries: .data 56 , 4 , 78,21,55,90
 	.extern   fn1
     .extern L3
+	.entry LOOP
 MAIN:    add  	r3 , LIST
 LOOP: prn #48
 jsr   fn1
@@ -17,7 +18,7 @@ sub L3 ,  L3
 	.entry MAIN
 jmp  LOOP
 END:  		stop
-STR:		.string  "abcd"f
+STR:		.string  "abcd"
 LIST:		.data   6 ,  -3009
 	.data   -100
 K:		.data  31
