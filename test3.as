@@ -10,17 +10,19 @@ lea STR  , r6
 inc   r6
 mov  *r6  , L3
 sub  r1 , r4
+END:  		stop
+STR:		.string  "abcd"
+LIST:		.data   6 ,  -3009
+
 cmp r3,  #-6
 bne END
 add  r7,  *r6
 clr r7
 sub L3 ,  L3
 	.entry MAIN
-jmp  LOOP
-END:  		stop
-STR:		.string  "abcd"
-LIST:		.data   6 ,  -3009
 	.data   -100
 K:		.data  31
+jmp  LOOP
+
 
 ;end of file

@@ -104,7 +104,7 @@ void second_pass(FILE *fp, char *file_name)
     EXIT_IF_RUNOUT_MEMORY
     rewind(fp); /*returning the file pointer to the beggining of the file*/
     second_pass_flag = TRUE;
-    while(IC_temp < IC)
+    while(line_cnt_tmp <= line_counter)
     {
         L=0;
 
