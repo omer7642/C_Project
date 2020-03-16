@@ -189,7 +189,6 @@ void second_pass(FILE *fp, char *file_name)
                 if(!add_symbol_value(token,IC_temp+1) && (*token) != ',') /*adding the symbol value to the memory, if the symbol don't exist, returns 0*/
                 {
                     error_flag=TRUE;
-                    
                     fprintf(stderr,"Assembler: Using undefined symbol (line %d)\n",line_cnt_tmp);
                 }
 

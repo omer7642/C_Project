@@ -12,4 +12,3 @@ char *get_symbol(char *,char *);          /*extracts the symbol from the line an
 BOOL isSavedPhrase(char *); /*assures that the given symbol is not a saved phrase*/
 int get_address_type(char *); /*recieves an operand and returns its adderessing type. if error it returns -1*/
 int complement_2 (int); /*receives a negative number and represents it in a 11 bit form. if there's a loss of information due to large number - it alerts*/
-

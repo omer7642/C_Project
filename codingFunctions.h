@@ -3,6 +3,7 @@
 #define TWO_OPERANDS 2
 #define ONE_OPERAND 1
 #define NO_OPERANDS 0
+#define QUOTE_MARK_NUM 2
 
 /*----------Functions------------------------------------------------*/
 void code_data(char *,enum line_type,int); /*this function decodes the data lines*/

@@ -10,9 +10,10 @@
 void code_data(char *line,enum line_type type,int symbol_flag)
 {
     char *token,str_num[MAX_NUM_LENGTH]; /*the data tokens we get from the line*/
-    int count=0,j=0,i=0,length,L,num;  /*count - num of commas, i and j indexes of iteration, length is used as the length of the string in data, L as the l
+    int count=0,j=0,i=0,length,L,num, quotationCount = 0;  /*count - num of commas, i and j indexes of iteration, length is used as the length of the string in data, L as the l
                                         length of the string in string and also for numbers that are scanned with no issues, num is the result we get in data
-                                        after turning the number from string to int*/
+                                        after turning the number from string to int. quotationCount counts the number of quotation marks to see if a string has 
+                                        not too many quotation marks*/
     char *temp_line = (char *)malloc(MAX_LINE); /*use it to not make changes to original line*/
     
     strcpy(temp_line,line);
@@ -33,13 +34,29 @@ void code_data(char *line,enum line_type type,int symbol_flag)
             return;
         }
 
+        while(token[i]) /*here we count the number of quotation marks in a given string token*/
+        {
+            if (token[i] == '\"')
+                quotationCount++;
+            i++;
+        }
+
+        i = 0;/*zero the i index for later use*/
+
+        if(quotationCount > QUOTE_MARK_NUM) /*if we have more quotation marks then we should,
+                                            return an error*/
+        {
+            error_flag = TRUE;
+            fprintf(stderr, "Assembler: too many quotation marks. (line %d)\n", line_counter);
+            return;
+        }
         
         L = strlen(token);
 
         if(token[0]!='\"' || token[L-1]!='\"') /*cheking syntax of string*/
         {
             error_flag=TRUE;
-            fprintf(stderr,"Assembler: Missing quotation marks (line %d)\n",line_counter);
+            fprintf(stderr,"Assembler: Missing quotation marks, or their location is misplaced (line %d)\n",line_counter);
             return;
         }
         

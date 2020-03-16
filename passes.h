@@ -16,4 +16,3 @@ int add_symbol_value(char *,int); /*fills the field of value of the symbol accor
 int add_entry(char *); /*checks to see if an entry symbol exists, update its type and its value accordingly*/
 void update_data_symbol();  /*update value to IC+100*/
 
-
